@@ -1,0 +1,15 @@
+name = "cv-optimizer"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "./dist"
+
+[vars]
+# Environment variables that are not secrets can be defined here
+# ANTHROPIC_API_KEY should be set via wrangler secret put ANTHROPIC_API_KEY
+
+# Development configuration
+[env.development]
+name = "cv-optimizer-dev"
+
+# Production configuration
+[env.production]
+name = "cv-optimizer"
