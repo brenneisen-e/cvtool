@@ -1,7 +1,3 @@
-interface Env {
-  ANTHROPIC_API_KEY: string;
-}
-
 interface DocumentData {
   name: string;
   type: string;
@@ -13,13 +9,14 @@ interface RequestBody {
   documents: DocumentData[];
 }
 
-export const onRequestPost: PagesFunction<Env> = async (context) => {
-  const { ANTHROPIC_API_KEY } = context.env;
+export const onRequestPost: PagesFunction = async (context) => {
+  // Get API key from header (sent by client)
+  const apiKey = context.request.headers.get('X-API-Key');
 
-  if (!ANTHROPIC_API_KEY) {
+  if (!apiKey) {
     return new Response(
-      JSON.stringify({ error: 'API-Schlüssel nicht konfiguriert' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      JSON.stringify({ error: 'API-Schlüssel fehlt. Bitte geben Sie Ihren Anthropic API Key ein.' }),
+      { status: 401, headers: { 'Content-Type': 'application/json' } }
     );
   }
 
@@ -27,7 +24,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const body = (await context.request.json()) as RequestBody;
     const { documents } = body;
 
-    // Prepare document contents for Claude
     const documentContents = documents
       .map((doc) => `=== ${doc.name} (${doc.type}) ===\n${doc.content}`)
       .join('\n\n');
@@ -69,24 +65,25 @@ Generiere 8-12 relevante Fragen. Sei freundlich und professionell.`;
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_API_KEY,
+        'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-3-5-sonnet-20241022',
+        model: 'claude-sonnet-4-20250514',
         max_tokens: 2048,
-        messages: [
-          {
-            role: 'user',
-            content: prompt,
-          },
-        ],
+        messages: [{ role: 'user', content: prompt }],
       }),
     });
 
     if (!response.ok) {
-      const error = await response.text();
-      console.error('Claude API error:', error);
+      const errorText = await response.text();
+      console.error('Claude API error:', errorText);
+      if (response.status === 401) {
+        return new Response(
+          JSON.stringify({ error: 'Ungültiger API-Schlüssel' }),
+          { status: 401, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
       return new Response(
         JSON.stringify({ error: 'KI-Analyse fehlgeschlagen' }),
         { status: 500, headers: { 'Content-Type': 'application/json' } }
@@ -99,7 +96,6 @@ Generiere 8-12 relevante Fragen. Sei freundlich und professionell.`;
     const textContent = result.content.find((c) => c.type === 'text');
     const analysisText = textContent?.text || '';
 
-    // Extract JSON from response
     const jsonMatch = analysisText.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       return new Response(
@@ -110,21 +106,14 @@ Generiere 8-12 relevante Fragen. Sei freundlich und professionell.`;
 
     const analysis = JSON.parse(jsonMatch[0]);
 
-    // Add answered: false to all questions
     const questions = analysis.questions.map((q: { id: string; question: string; category: string }) => ({
       ...q,
       answered: false,
     }));
 
     return new Response(
-      JSON.stringify({
-        questions,
-        cvStructure: analysis.cvStructure,
-      }),
-      {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      }
+      JSON.stringify({ questions, cvStructure: analysis.cvStructure }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
   } catch (error) {
     console.error('Error in analyze:', error);

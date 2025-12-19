@@ -1,7 +1,3 @@
-interface Env {
-  ANTHROPIC_API_KEY: string;
-}
-
 interface DocumentData {
   name: string;
   type: string;
@@ -20,13 +16,13 @@ interface RequestBody {
   additionalInfo?: string;
 }
 
-export const onRequestPost: PagesFunction<Env> = async (context) => {
-  const { ANTHROPIC_API_KEY } = context.env;
+export const onRequestPost: PagesFunction = async (context) => {
+  const apiKey = context.request.headers.get('X-API-Key');
 
-  if (!ANTHROPIC_API_KEY) {
+  if (!apiKey) {
     return new Response(
-      JSON.stringify({ error: 'API-Schlüssel nicht konfiguriert' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      JSON.stringify({ error: 'API-Schlüssel fehlt' }),
+      { status: 401, headers: { 'Content-Type': 'application/json' } }
     );
   }
 
@@ -34,12 +30,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const body = (await context.request.json()) as RequestBody;
     const { documents, answers, additionalInfo } = body;
 
-    // Prepare document contents
     const documentContents = documents
       .map((doc) => `=== ${doc.name} (${doc.type}) ===\n${doc.content}`)
       .join('\n\n');
 
-    // Prepare interview answers
     const interviewAnswers = answers
       .map((a) => `Frage: ${a.question}\nAntwort: ${a.answer}`)
       .join('\n\n');
@@ -61,7 +55,6 @@ Der CV sollte:
 - Die Consulting-Branche berücksichtigen (Projekterfahrung, Methoden)
 - Quantifizierbare Erfolge hervorheben
 - Professionell und modern klingen
-- Alle relevanten Informationen aus den Dokumenten und Antworten integrieren
 
 JSON-FORMAT:
 {
@@ -128,24 +121,25 @@ Antworte NUR mit dem JSON, ohne zusätzliche Erklärungen.`;
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_API_KEY,
+        'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-3-5-sonnet-20241022',
+        model: 'claude-sonnet-4-20250514',
         max_tokens: 4096,
-        messages: [
-          {
-            role: 'user',
-            content: prompt,
-          },
-        ],
+        messages: [{ role: 'user', content: prompt }],
       }),
     });
 
     if (!response.ok) {
-      const error = await response.text();
-      console.error('Claude API error:', error);
+      const errorText = await response.text();
+      console.error('Claude API error:', errorText);
+      if (response.status === 401) {
+        return new Response(
+          JSON.stringify({ error: 'Ungültiger API-Schlüssel' }),
+          { status: 401, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
       return new Response(
         JSON.stringify({ error: 'CV-Generierung fehlgeschlagen' }),
         { status: 500, headers: { 'Content-Type': 'application/json' } }
@@ -158,7 +152,6 @@ Antworte NUR mit dem JSON, ohne zusätzliche Erklärungen.`;
     const textContent = result.content.find((c) => c.type === 'text');
     const cvText = textContent?.text || '';
 
-    // Extract JSON from response
     const jsonMatch = cvText.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       return new Response(
@@ -171,10 +164,7 @@ Antworte NUR mit dem JSON, ohne zusätzliche Erklärungen.`;
 
     return new Response(
       JSON.stringify({ cvData }),
-      {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      }
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
   } catch (error) {
     console.error('Error in generate:', error);

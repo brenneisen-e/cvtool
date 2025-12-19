@@ -12,7 +12,8 @@ interface GenerateResponse {
 }
 
 export async function analyzeDocuments(
-  files: UploadedFile[]
+  files: UploadedFile[],
+  apiKey: string
 ): Promise<AnalyzeResponse> {
   const documentsData = files.map((f) => ({
     name: f.name,
@@ -25,12 +26,14 @@ export async function analyzeDocuments(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'X-API-Key': apiKey,
     },
     body: JSON.stringify({ documents: documentsData }),
   });
 
   if (!response.ok) {
-    throw new Error(`Analyse fehlgeschlagen: ${response.statusText}`);
+    const error = await response.json().catch(() => ({ error: response.statusText }));
+    throw new Error(error.error || `Analyse fehlgeschlagen: ${response.statusText}`);
   }
 
   return response.json();
@@ -38,7 +41,8 @@ export async function analyzeDocuments(
 
 export async function generateCV(
   interviewState: InterviewState,
-  files: UploadedFile[]
+  files: UploadedFile[],
+  apiKey: string
 ): Promise<GenerateResponse> {
   const documentsData = files.map((f) => ({
     name: f.name,
@@ -58,6 +62,7 @@ export async function generateCV(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'X-API-Key': apiKey,
     },
     body: JSON.stringify({
       documents: documentsData,
@@ -67,7 +72,8 @@ export async function generateCV(
   });
 
   if (!response.ok) {
-    throw new Error(`CV-Generierung fehlgeschlagen: ${response.statusText}`);
+    const error = await response.json().catch(() => ({ error: response.statusText }));
+    throw new Error(error.error || `CV-Generierung fehlgeschlagen: ${response.statusText}`);
   }
 
   return response.json();
@@ -81,7 +87,6 @@ export function generateMockQuestions(files: UploadedFile[]): InterviewQuestion[
 
   const questions: InterviewQuestion[] = [];
 
-  // Gap questions
   questions.push({
     id: 'gap-1',
     question:
@@ -90,7 +95,6 @@ export function generateMockQuestions(files: UploadedFile[]): InterviewQuestion[
     answered: false,
   });
 
-  // Project questions
   questions.push({
     id: 'proj-1',
     question:
@@ -107,7 +111,6 @@ export function generateMockQuestions(files: UploadedFile[]): InterviewQuestion[
     answered: false,
   });
 
-  // Skills questions
   if (!myContent.includes('python') && hasExampleCV) {
     questions.push({
       id: 'skill-1',
@@ -126,7 +129,6 @@ export function generateMockQuestions(files: UploadedFile[]): InterviewQuestion[
     answered: false,
   });
 
-  // Achievement questions
   questions.push({
     id: 'achieve-1',
     question:
@@ -143,7 +145,6 @@ export function generateMockQuestions(files: UploadedFile[]): InterviewQuestion[
     answered: false,
   });
 
-  // Soft skills questions
   questions.push({
     id: 'soft-1',
     question:
@@ -160,7 +161,6 @@ export function generateMockQuestions(files: UploadedFile[]): InterviewQuestion[
     answered: false,
   });
 
-  // General questions
   questions.push({
     id: 'gen-1',
     question:
@@ -184,15 +184,11 @@ export function generateMockCV(
   interviewState: InterviewState,
   files: UploadedFile[]
 ): CVData {
-  // Extract name from my-cv if possible
   const myCV = files.find((f) => f.type === 'my-cv');
   const content = myCV?.content || '';
-
-  // Try to extract name (simple heuristic)
   const firstLine = content.split('\n')[0]?.trim() || '';
   const name = firstLine.length > 3 && firstLine.length < 50 ? firstLine : 'Max Mustermann';
 
-  // Build CV from interview answers
   const answers = interviewState.questions.reduce(
     (acc, q) => {
       if (q.answer && q.answer !== '[Übersprungen]') {
@@ -215,7 +211,7 @@ export function generateMockCV(
     },
     summary:
       answers.general?.[0]?.answer ||
-      'Erfahrener Consultant mit fundierten Kenntnissen in Projektmanagement und digitaler Transformation. Nachweisliche Erfolge in der Leitung komplexer Projekte und der Optimierung von Geschäftsprozessen.',
+      'Erfahrener Consultant mit fundierten Kenntnissen in Projektmanagement und digitaler Transformation.',
     experience: [
       {
         company: 'Beispiel Consulting GmbH',
@@ -225,27 +221,13 @@ export function generateMockCV(
         current: true,
         description:
           answers.projects?.[0]?.answer ||
-          'Beratung von Großunternehmen in Fragen der digitalen Transformation und Prozessoptimierung.',
+          'Beratung von Großunternehmen in Fragen der digitalen Transformation.',
         achievements: [
           answers.achievements?.[0]?.answer ||
             'Erfolgreiche Implementierung eines neuen ERP-Systems mit 30% Effizienzsteigerung',
           'Leitung eines cross-funktionalen Teams mit 8 Mitarbeitern',
         ],
         technologies: ['SAP', 'Power BI', 'Azure'],
-      },
-      {
-        company: 'Vorherige AG',
-        position: 'Consultant',
-        startDate: '2018',
-        endDate: '2021',
-        current: false,
-        description:
-          'Unterstützung bei der Einführung agiler Methoden und digitaler Arbeitsweisen.',
-        achievements: [
-          'Durchführung von über 20 Workshops zur agilen Transformation',
-          'Entwicklung eines internen Schulungsprogramms',
-        ],
-        technologies: ['Jira', 'Confluence', 'MS Office'],
       },
     ],
     education: [
@@ -257,71 +239,25 @@ export function generateMockCV(
         endDate: '2018',
         grade: '1.7',
       },
-      {
-        institution: 'Ludwig-Maximilians-Universität München',
-        degree: 'Bachelor of Science',
-        field: 'Betriebswirtschaftslehre',
-        startDate: '2012',
-        endDate: '2015',
-        grade: '1.9',
-      },
     ],
     skills: [
-      {
-        category: 'Methoden',
-        skills: [
-          'Agile/Scrum',
-          'Design Thinking',
-          'Change Management',
-          'Lean Management',
-        ],
-      },
-      {
-        category: 'Tools',
-        skills: ['SAP', 'Power BI', 'Jira', 'Confluence', 'MS Office 365'],
-      },
-      {
-        category: 'Technologien',
-        skills: ['Azure', 'AWS', 'Python', 'SQL'],
-      },
+      { category: 'Methoden', skills: ['Agile/Scrum', 'Design Thinking', 'Change Management'] },
+      { category: 'Tools', skills: ['SAP', 'Power BI', 'Jira', 'Confluence'] },
     ],
-    certifications: [
-      'Scrum Master (PSM I)',
-      'PRINCE2 Foundation',
-      'Azure Fundamentals',
-    ],
+    certifications: ['Scrum Master (PSM I)', 'PRINCE2 Foundation'],
     languages: [
       { language: 'Deutsch', level: 'Muttersprache' },
       { language: 'Englisch', level: 'Verhandlungssicher (C1)' },
-      { language: 'Französisch', level: 'Grundkenntnisse (A2)' },
     ],
     projects: [
       {
-        name: 'Digitale Transformation Finanzbranche',
+        name: 'Digitale Transformation',
         client: 'Große deutsche Bank',
         role: 'Projektleiter',
         duration: '2022 - 2023',
-        description:
-          answers.projects?.[1]?.answer ||
-          'Leitung der digitalen Transformation im Retail-Banking-Bereich mit Fokus auf Kundenzentrierung und Prozessautomatisierung.',
-        technologies: ['Azure', 'Power Platform', 'SAP'],
-        achievements: [
-          'Reduzierung der Durchlaufzeiten um 40%',
-          'Einführung von Self-Service-Portalen für 2 Mio. Kunden',
-        ],
-      },
-      {
-        name: 'Agile Transformation',
-        client: 'Internationaler Automobilzulieferer',
-        role: 'Agile Coach',
-        duration: '2021 - 2022',
-        description:
-          'Begleitung der agilen Transformation von 15 Teams im Entwicklungsbereich.',
-        technologies: ['Jira', 'Confluence', 'Miro'],
-        achievements: [
-          'Time-to-Market Reduktion um 25%',
-          'Steigerung der Mitarbeiterzufriedenheit um 15 Punkte',
-        ],
+        description: answers.projects?.[1]?.answer || 'Leitung der digitalen Transformation.',
+        technologies: ['Azure', 'Power Platform'],
+        achievements: ['Reduzierung der Durchlaufzeiten um 40%'],
       },
     ],
   };

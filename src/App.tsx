@@ -11,12 +11,10 @@ import {
   generateMockCV,
 } from './lib/api';
 import { saveFile, getAllFiles, saveState, getState, clearAll } from './lib/storage';
-import { FileText, RefreshCw } from 'lucide-react';
-
-// Set to true to use mock data instead of API calls
-const USE_MOCK_API = true;
 
 function App() {
+  const [apiKey, setApiKey] = useState('');
+  const [showApiKey, setShowApiKey] = useState(false);
   const [state, setState] = useState<AppState>({
     currentStep: 1,
     uploadedFiles: [],
@@ -26,6 +24,8 @@ function App() {
     error: null,
   });
 
+  const useMockApi = !apiKey.startsWith('sk-ant-');
+
   // Load saved state on mount
   useEffect(() => {
     async function loadState() {
@@ -34,7 +34,9 @@ function App() {
         const savedStep = await getState<number>('currentStep');
         const savedInterview = await getState<InterviewState>('interviewState');
         const savedCV = await getState<CVData>('generatedCV');
+        const savedApiKey = localStorage.getItem('anthropic_api_key') || '';
 
+        setApiKey(savedApiKey);
         setState((prev) => ({
           ...prev,
           uploadedFiles: files,
@@ -48,6 +50,13 @@ function App() {
     }
     loadState();
   }, []);
+
+  // Save API key
+  useEffect(() => {
+    if (apiKey) {
+      localStorage.setItem('anthropic_api_key', apiKey);
+    }
+  }, [apiKey]);
 
   // Save state changes
   useEffect(() => {
@@ -70,8 +79,6 @@ function App() {
 
   const handleFilesChange = async (files: UploadedFile[]) => {
     setState((prev) => ({ ...prev, uploadedFiles: files }));
-
-    // Save each file to IndexedDB
     for (const file of files) {
       await saveFile(file);
     }
@@ -87,13 +94,11 @@ function App() {
     try {
       let questions;
 
-      if (USE_MOCK_API) {
-        // Use mock questions for development
+      if (useMockApi) {
         await new Promise((resolve) => setTimeout(resolve, 1500));
         questions = generateMockQuestions(state.uploadedFiles);
       } else {
-        // Use real API
-        const result = await analyzeDocuments(state.uploadedFiles);
+        const result = await analyzeDocuments(state.uploadedFiles, apiKey);
         questions = result.questions;
       }
 
@@ -135,13 +140,11 @@ function App() {
     try {
       let cvData;
 
-      if (USE_MOCK_API) {
-        // Use mock CV for development
+      if (useMockApi) {
         await new Promise((resolve) => setTimeout(resolve, 2000));
         cvData = generateMockCV(state.interviewState, state.uploadedFiles);
       } else {
-        // Use real API
-        const result = await generateCV(state.interviewState, state.uploadedFiles);
+        const result = await generateCV(state.interviewState, state.uploadedFiles, apiKey);
         cvData = result.cvData;
       }
 
@@ -160,7 +163,6 @@ function App() {
   };
 
   const handleStepClick = (step: 1 | 2 | 3) => {
-    // Only allow going to completed steps or current step
     const canNavigate =
       step === 1 ||
       (step === 2 && stepsCompleted[1]) ||
@@ -194,26 +196,55 @@ function App() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="py-6 px-4">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-              <FileText className="w-6 h-6 text-indigo-600" />
-            </div>
+      <header className="py-6 px-4 border-b border-white/10">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-2xl font-bold text-white">CV Optimizer</h1>
-              <p className="text-white/60 text-sm">
+              <p className="text-white/50 text-sm">
                 KI-gestützte Lebenslauf-Optimierung
               </p>
             </div>
+            <button
+              onClick={handleReset}
+              className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white/70 rounded text-sm"
+            >
+              Neu starten
+            </button>
           </div>
-          <button
-            onClick={handleReset}
-            className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white/70 rounded-lg transition-colors flex items-center gap-2 text-sm"
-          >
-            <RefreshCw className="w-4 h-4" />
-            Neu starten
-          </button>
+
+          {/* API Key Input */}
+          <div className="bg-white/5 rounded p-4">
+            <div className="flex items-center gap-4">
+              <label className="text-white/70 text-sm whitespace-nowrap">
+                Anthropic API Key:
+              </label>
+              <div className="flex-1 relative">
+                <input
+                  type={showApiKey ? 'text' : 'password'}
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                  placeholder="sk-ant-api03-..."
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded text-white text-sm placeholder-white/30 focus:outline-none focus:border-white/40"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowApiKey(!showApiKey)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-white/50 hover:text-white/70 text-xs"
+                >
+                  {showApiKey ? 'Verbergen' : 'Anzeigen'}
+                </button>
+              </div>
+              <span className={`text-xs px-2 py-1 rounded ${useMockApi ? 'bg-yellow-500/20 text-yellow-300' : 'bg-green-500/20 text-green-300'}`}>
+                {useMockApi ? 'Demo-Modus' : 'API aktiv'}
+              </span>
+            </div>
+            {useMockApi && (
+              <p className="text-white/40 text-xs mt-2">
+                Ohne API-Key werden Demo-Daten verwendet. Holen Sie sich einen Key auf console.anthropic.com
+              </p>
+            )}
+          </div>
         </div>
       </header>
 
@@ -229,7 +260,7 @@ function App() {
       {/* Error Display */}
       {state.error && (
         <div className="max-w-4xl mx-auto px-4 mt-4">
-          <div className="p-4 bg-red-500/20 border border-red-400/50 rounded-lg text-red-200">
+          <div className="p-4 bg-red-500/20 border border-red-400/50 rounded text-red-200 text-sm">
             {state.error}
           </div>
         </div>
@@ -267,18 +298,9 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="py-6 px-4 mt-auto">
-        <div className="max-w-6xl mx-auto text-center text-white/40 text-sm">
-          <p>
-            CV Optimizer - Optimieren Sie Ihren Lebenslauf mit KI-Unterstützung
-          </p>
-          <p className="mt-1">
-            {USE_MOCK_API && (
-              <span className="text-yellow-400/60">
-                Demo-Modus aktiv - Keine API-Aufrufe
-              </span>
-            )}
-          </p>
+      <footer className="py-6 px-4">
+        <div className="max-w-6xl mx-auto text-center text-white/30 text-xs">
+          CV Optimizer - Optimieren Sie Ihren Lebenslauf mit KI
         </div>
       </footer>
     </div>
