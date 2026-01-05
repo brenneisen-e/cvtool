@@ -11,6 +11,54 @@ interface GenerateResponse {
   cvData: CVData;
 }
 
+interface RetryOptions {
+  maxRetries?: number;
+  baseDelay?: number;
+  maxDelay?: number;
+}
+
+/**
+ * Fetches with exponential backoff retry for network errors
+ */
+async function fetchWithRetry(
+  url: string,
+  options: RequestInit,
+  { maxRetries = 3, baseDelay = 1000, maxDelay = 8000 }: RetryOptions = {}
+): Promise<Response> {
+  let lastError: Error | null = null;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetch(url, options);
+
+      // Don't retry on client errors (4xx), only on server errors (5xx) or network issues
+      if (response.ok || (response.status >= 400 && response.status < 500)) {
+        return response;
+      }
+
+      // Server error - will retry
+      if (attempt < maxRetries) {
+        const delay = Math.min(baseDelay * Math.pow(2, attempt), maxDelay);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+        continue;
+      }
+
+      return response;
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+
+      // Network error - retry with exponential backoff
+      if (attempt < maxRetries) {
+        const delay = Math.min(baseDelay * Math.pow(2, attempt), maxDelay);
+        console.warn(`Request failed, retrying in ${delay}ms... (attempt ${attempt + 1}/${maxRetries})`);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+    }
+  }
+
+  throw lastError || new Error('Request failed after retries');
+}
+
 export async function analyzeDocuments(
   files: UploadedFile[],
   apiKey: string
@@ -22,7 +70,7 @@ export async function analyzeDocuments(
     extractedData: f.extractedData,
   }));
 
-  const response = await fetch(`${API_BASE}/analyze`, {
+  const response = await fetchWithRetry(`${API_BASE}/analyze`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -58,7 +106,7 @@ export async function generateCV(
       category: q.category,
     }));
 
-  const response = await fetch(`${API_BASE}/generate`, {
+  const response = await fetchWithRetry(`${API_BASE}/generate`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
