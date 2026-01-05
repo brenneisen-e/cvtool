@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import {
   Send,
   SkipForward,
@@ -26,6 +26,15 @@ interface ChatMessage {
   timestamp: Date;
 }
 
+// Initial welcome message
+const createWelcomeMessage = (): ChatMessage => ({
+  id: 'welcome',
+  role: 'assistant',
+  content:
+    'Willkommen beim CV-Interview! Ich werde Ihre hochgeladenen Dokumente analysieren und Ihnen gezielte Fragen stellen, um Ihren Lebenslauf zu optimieren. Klicken Sie auf "Interview starten", um zu beginnen.',
+  timestamp: new Date(),
+});
+
 export function InterviewChat({
   uploadedFiles,
   interviewState,
@@ -34,10 +43,13 @@ export function InterviewChat({
   isLoading,
   onStartInterview,
 }: InterviewChatProps) {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  // Initialize with welcome message to avoid setState in useEffect
+  const [messages, setMessages] = useState<ChatMessage[]>(() => [createWelcomeMessage()]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  // Track which question IDs have been added to avoid duplicates
+  const addedQuestionIds = useRef<Set<string>>(new Set());
 
   const currentQuestion = interviewState?.questions[interviewState.currentQuestionIndex];
   const progress = interviewState
@@ -48,41 +60,36 @@ export function InterviewChat({
       )
     : 0;
 
+  // Scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  useEffect(() => {
-    // Add welcome message on mount
-    if (messages.length === 0) {
-      const welcomeMessage: ChatMessage = {
-        id: 'welcome',
+  // Add new question to chat using a callback pattern
+  const addQuestionMessage = useCallback((question: InterviewQuestion) => {
+    const questionId = `question-${question.id}`;
+    if (!addedQuestionIds.current.has(questionId)) {
+      addedQuestionIds.current.add(questionId);
+      const questionMessage: ChatMessage = {
+        id: questionId,
         role: 'assistant',
-        content:
-          'Willkommen beim CV-Interview! Ich werde Ihre hochgeladenen Dokumente analysieren und Ihnen gezielte Fragen stellen, um Ihren Lebenslauf zu optimieren. Klicken Sie auf "Interview starten", um zu beginnen.',
+        content: question.question,
         timestamp: new Date(),
       };
-      setMessages([welcomeMessage]);
+      setMessages((prev) => [...prev, questionMessage]);
     }
   }, []);
 
+  // Handle question changes - using ref to avoid setState in effect
   useEffect(() => {
-    // Add current question to chat when interview state changes
     if (currentQuestion && !currentQuestion.answered) {
-      const existingQuestionMessage = messages.find(
-        (m) => m.id === `question-${currentQuestion.id}`
-      );
-      if (!existingQuestionMessage) {
-        const questionMessage: ChatMessage = {
-          id: `question-${currentQuestion.id}`,
-          role: 'assistant',
-          content: currentQuestion.question,
-          timestamp: new Date(),
-        };
-        setMessages((prev) => [...prev, questionMessage]);
-      }
+      // Use requestAnimationFrame to defer the state update
+      const frameId = requestAnimationFrame(() => {
+        addQuestionMessage(currentQuestion);
+      });
+      return () => cancelAnimationFrame(frameId);
     }
-  }, [currentQuestion?.id]);
+  }, [currentQuestion, addQuestionMessage]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
