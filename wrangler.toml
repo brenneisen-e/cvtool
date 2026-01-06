@@ -2,10 +2,6 @@ name = "cv-optimizer"
 compatibility_date = "2024-01-01"
 pages_build_output_dir = "./dist"
 
-# Build configuration
-[build]
-command = "npm install && npm run build"
-
 # Preview environment (for PR previews)
 [env.preview]
 name = "cv-optimizer-preview"
@@ -14,5 +10,9 @@ name = "cv-optimizer-preview"
 [env.production]
 name = "cv-optimizer"
 
-# Note: ANTHROPIC_API_KEY should be set via Cloudflare dashboard or:
+# Note: Build command must be configured in Cloudflare Dashboard:
+# Settings → Build & deployments → Build command: npm run build
+# Or use the GitHub Action workflow for deployments.
+#
+# ANTHROPIC_API_KEY should be set via Cloudflare dashboard or:
 # wrangler secret put ANTHROPIC_API_KEY
