@@ -30,6 +30,58 @@ function App() {
       .finally(() => setIsLoading(false));
   }, []);
 
+  // Load default templates from public folder on mount
+  useEffect(() => {
+    async function loadDefaultTemplates() {
+      try {
+        const templates: UploadedFile[] = [];
+
+        // Load DOCX template
+        const docxResponse = await fetch('/templates/Lastname_Firstname _Mon_Year_DE.docx');
+        if (docxResponse.ok) {
+          const docxBlob = await docxResponse.blob();
+          const docxFile = new File([docxBlob], 'Lastname_Firstname _Mon_Year_DE.docx', {
+            type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+          });
+          templates.push({
+            id: 'default-template-docx',
+            name: docxFile.name,
+            type: 'template-docx',
+            file: docxFile,
+          });
+        }
+
+        // Load PPTX template
+        const pptxResponse = await fetch('/templates/LastName_FirstName_Mon_Year_Language-EN_Other-Languages.pptx');
+        if (pptxResponse.ok) {
+          const pptxBlob = await pptxResponse.blob();
+          const pptxFile = new File([pptxBlob], 'LastName_FirstName_Mon_Year_Language-EN_Other-Languages.pptx', {
+            type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+          });
+          templates.push({
+            id: 'default-template-pptx',
+            name: pptxFile.name,
+            type: 'template-pptx',
+            file: pptxFile,
+          });
+        }
+
+        if (templates.length > 0) {
+          setUploadedFiles(prev => {
+            // Don't overwrite user-uploaded templates
+            const userTemplates = prev.filter(f => !f.id.startsWith('default-'));
+            return [...userTemplates, ...templates];
+          });
+          console.log('Deloitte templates loaded:', templates.map(t => t.name));
+        }
+      } catch (err) {
+        console.warn('Could not load default templates:', err);
+      }
+    }
+
+    loadDefaultTemplates();
+  }, []);
+
   // Save CV data
   const handleSaveCV = useCallback(async (data: CVData) => {
     setCvData(data);
@@ -227,9 +279,32 @@ function App() {
                   <FileDown className="w-5 h-5" />
                   In Deloitte-Vorlagen exportieren
                 </h3>
-                <p className="text-white/60 text-sm mb-4">
-                  Exportiere deinen CV in die Deloitte One-Pager Vorlagen. Lade vorher die Vorlagen hoch, um dein eigenes Layout zu verwenden.
-                </p>
+
+                {/* Template Status */}
+                <div className="mb-4 p-3 bg-white/5 rounded-lg">
+                  <p className="text-white/70 text-sm font-medium mb-2">Geladene Templates:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {uploadedFiles.find(f => f.type === 'template-docx') ? (
+                      <span className="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded flex items-center gap-1">
+                        ✓ DOCX Template
+                      </span>
+                    ) : (
+                      <span className="px-2 py-1 bg-yellow-500/20 text-yellow-300 text-xs rounded">
+                        ⚠ Kein DOCX Template
+                      </span>
+                    )}
+                    {uploadedFiles.find(f => f.type === 'template-pptx') ? (
+                      <span className="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded flex items-center gap-1">
+                        ✓ PPTX Template
+                      </span>
+                    ) : (
+                      <span className="px-2 py-1 bg-yellow-500/20 text-yellow-300 text-xs rounded">
+                        ⚠ Kein PPTX Template
+                      </span>
+                    )}
+                  </div>
+                </div>
+
                 <div className="flex flex-wrap gap-4">
                   <button
                     onClick={() => handleExport('docx')}
