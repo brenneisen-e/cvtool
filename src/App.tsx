@@ -132,6 +132,7 @@ function App() {
             isLoading={state.isLoading}
             onRegenerate={handleGenerateCV}
             onBack={handleBack}
+            uploadedFiles={state.uploadedFiles}
           />
         )}
       </main>

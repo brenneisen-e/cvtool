@@ -14,7 +14,7 @@ import {
   Code,
   FolderKanban,
 } from 'lucide-react';
-import type { CVData } from '../types';
+import type { CVData, UploadedFile } from '../types';
 import { generateDocx, generatePptx, downloadBlob } from '../lib/documentGenerator';
 
 interface CVPreviewProps {
@@ -22,6 +22,7 @@ interface CVPreviewProps {
   isLoading: boolean;
   onRegenerate: () => void;
   onBack: () => void;
+  uploadedFiles?: UploadedFile[];
 }
 
 export function CVPreview({
@@ -29,6 +30,7 @@ export function CVPreview({
   isLoading,
   onRegenerate,
   onBack,
+  uploadedFiles,
 }: CVPreviewProps) {
   const [downloadingDocx, setDownloadingDocx] = useState(false);
   const [downloadingPptx, setDownloadingPptx] = useState(false);
@@ -38,7 +40,7 @@ export function CVPreview({
     if (!cvData) return;
     setDownloadingDocx(true);
     try {
-      const blob = await generateDocx(cvData);
+      const blob = await generateDocx(cvData, uploadedFiles);
       downloadBlob(blob, `${cvData.personalInfo.name.replace(/\s+/g, '_')}_CV.docx`);
     } catch (error) {
       console.error('Error generating DOCX:', error);
@@ -51,7 +53,7 @@ export function CVPreview({
     if (!cvData) return;
     setDownloadingPptx(true);
     try {
-      const blob = await generatePptx(cvData);
+      const blob = await generatePptx(cvData, uploadedFiles);
       downloadBlob(blob, `${cvData.personalInfo.name.replace(/\s+/g, '_')}_CV.pptx`);
     } catch (error) {
       console.error('Error generating PPTX:', error);
