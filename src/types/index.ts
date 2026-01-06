@@ -1,7 +1,7 @@
 export interface UploadedFile {
   id: string;
   name: string;
-  type: 'template-docx' | 'template-pptx' | 'example-cv' | 'my-cv';
+  type: 'template-docx' | 'template-pptx' | 'example-cv-docx' | 'example-cv-pptx' | 'my-cv';
   file: File;
   content?: string;
   extractedData?: ExtractedDocument;
