@@ -19,21 +19,38 @@ interface DocxReplacements {
 function getDocxReplacements(cvData: CVData): DocxReplacements[] {
   const fullName = cvData.personalInfo.name || 'Vorname Nachname';
 
+  // Skills kategorisieren
+  const techSkills = cvData.skills.find(s =>
+    s.category.toLowerCase().includes('tech') || s.category.toLowerCase().includes('software')
+  )?.skills || [];
+
+  // Industries aus Projekten extrahieren
+  const industries = [...new Set(cvData.projects.map(p => p.client).filter(Boolean))].slice(0, 4);
+
   return [
-    // Name
-    { pattern: /\(Vorname, Nachname\)/gi, getValue: () => fullName },
-    { pattern: /Vorname, Nachname/gi, getValue: () => fullName },
-    { pattern: 'Name', getValue: () => fullName },
+    // Name - exakter Platzhalter aus Template
+    { pattern: '(Vorname, Nachname)', getValue: () => fullName },
+    { pattern: 'Vorname, Nachname', getValue: () => fullName },
 
     // Position/Level
-    { pattern: /\(Level\)/gi, getValue: () => cvData.personalInfo.title || 'Consultant' },
+    { pattern: '(Level)', getValue: () => cvData.personalInfo.title || 'Consultant' },
 
     // Nationalität
-    { pattern: /\(….\)/g, getValue: () => cvData.personalInfo.location?.split(',')[1]?.trim() || 'Deutsch' },
+    { pattern: '(….)', getValue: () => 'Deutsch' },
 
-    // Ausbildung
+    // Offering Portfolio - exakter Platzhalter
     {
-      pattern: /\(Höchster erzielter Abschluss, Vertiefungsfächer, Name der Universität – zusätzliche Angaben zur Ausbildung können am Ende des Dokuments angeführt werden\)/gi,
+      pattern: '(Strategy, Analytics and M&A; Customer & Marketing; Core Industry Operations; Human Capital; Enterprise Performance)',
+      getValue: () => 'Core Business Operations'
+    },
+
+    // Market Offering
+    { pattern: '(Falls nicht zutreffend diese Zeile bitte löschen.)', getValue: () => '' },
+    { pattern: '(Abhängig vom Offering Portfolio)', getValue: () => 'Banking and Capital Markets Transformation' },
+
+    // Ausbildung - kompletter Platzhalter
+    {
+      pattern: '(Höchster erzielter Abschluss, Vertiefungsfächer, Name der Universität – zusätzliche Angaben zur Ausbildung können am Ende des Dokuments angeführt werden)',
       getValue: () => {
         const edu = cvData.education[0];
         if (edu) {
@@ -42,71 +59,44 @@ function getDocxReplacements(cvData: CVData): DocxReplacements[] {
         return '';
       }
     },
-    {
-      pattern: /Höchster erzielter Abschluss, Vertiefungsfächer/gi,
-      getValue: () => {
-        const edu = cvData.education[0];
-        return edu ? `${edu.degree}, ${edu.field}` : '';
-      }
-    },
-    {
-      pattern: /Name der Universität/gi,
-      getValue: () => cvData.education[0]?.institution || ''
-    },
 
-    // Profil
+    // Profil - kompletter Platzhalter (über mehrere XML-Tags fragmentiert)
     {
-      pattern: /\(Maximal 15 Zeilen:.*?Berufserfahrung\)/gis,
-      getValue: () => cvData.summary || ''
-    },
-    {
-      pattern: /Gegenwärtige Spezialisierung.*?Berufserfahrung/gis,
+      pattern: /\(Max.*?Berufserfahrung\)/gis,
       getValue: () => cvData.summary || ''
     },
 
-    // Software/Tools
+    // Software-Pakete
     {
       pattern: /\(Oracle, PeopleSoft, CRM Lösungen.*?etc\.\)/gis,
-      getValue: () => {
-        const techSkills = cvData.skills.find(s =>
-          s.category.toLowerCase().includes('software') ||
-          s.category.toLowerCase().includes('technolog')
-        );
-        return techSkills?.skills.join(', ') || '';
-      }
+      getValue: () => techSkills.slice(0, 5).join(', ') || ''
     },
+
+    // Software Tools
     {
       pattern: /\(MS Access, Windows NT, Lotus Notes.*?etc\.\)/gis,
-      getValue: () => {
-        const tools = cvData.skills.find(s => s.category.toLowerCase().includes('tool'));
-        return tools?.skills.join(', ') || '';
-      }
+      getValue: () => techSkills.slice(5, 10).join(', ') || ''
     },
 
     // Zertifikate
     {
-      pattern: /\(Agile, Scrum, Salesforce…*?\)/gi,
-      getValue: () => cvData.certifications.join(', ')
+      pattern: /\(Agile, Scrum, Salesforce.*?\)/gi,
+      getValue: () => cvData.certifications.join(', ') || ''
     },
 
-    // Sprachen - Formatierung
-    {
-      pattern: /Muttersprache/g,
-      getValue: () => {
-        const native = cvData.languages.find(l =>
-          l.level.toLowerCase().includes('mutter') || l.level.toLowerCase().includes('native')
-        );
-        return native ? `${native.language} (Muttersprache)` : 'Muttersprache';
-      }
-    },
+    // Sprachen
+    { pattern: 'Muttersprache', getValue: () => cvData.languages[0] ? `${cvData.languages[0].language} (${cvData.languages[0].level})` : 'Deutsch (Muttersprache)' },
+    { pattern: 'Verhandlungssicher', getValue: () => cvData.languages[1] ? `${cvData.languages[1].language} (${cvData.languages[1].level})` : '' },
+    { pattern: 'Fortgeschrittene Kenntnisse', getValue: () => cvData.languages[2] ? `${cvData.languages[2].language} (${cvData.languages[2].level})` : '' },
+    { pattern: 'Konversationsniveau', getValue: () => cvData.languages[3] ? `${cvData.languages[3].language} (${cvData.languages[3].level})` : '' },
 
-    // Datum-Platzhalter
-    { pattern: /Mmm JJ – heute/g, getValue: () => {
+    // Datum-Platzhalter für Erfahrungen
+    { pattern: 'Mmm JJ – heute', getValue: () => {
         const exp = cvData.experience[0];
-        return exp ? `${exp.startDate} – heute` : '';
+        return exp ? `${exp.startDate} – ${exp.current ? 'heute' : exp.endDate}` : '';
       }
     },
-    { pattern: /Mmm JJ – Mmm JJ/g, getValue: () => {
+    { pattern: 'Mmm JJ – Mmm JJ', getValue: () => {
         const exp = cvData.experience[1];
         return exp ? `${exp.startDate} – ${exp.endDate || 'heute'}` : '';
       }
@@ -114,19 +104,22 @@ function getDocxReplacements(cvData: CVData): DocxReplacements[] {
 
     // Projekt-Details
     {
-      pattern: /\(Name oder nähere Beschreibung des Kunden \+ Industrie \+ Ort \+ Art des Projekts\)/gi,
+      pattern: '(Name oder nähere Beschreibung des Kunden + Industrie + Ort + Art des Projekts)',
       getValue: () => {
         const proj = cvData.projects[0];
-        return proj ? `${proj.client || proj.name}` : '';
+        return proj ? `${proj.client || proj.name}, ${proj.role}` : '';
       }
     },
-    {
-      pattern: /\(Rolle\)/gi,
-      getValue: () => cvData.projects[0]?.role || ''
-    },
+    { pattern: '(Rolle)', getValue: () => cvData.projects[0]?.role || '' },
     {
       pattern: /\(Tätigkeit,.*?Ergebnis\)/gis,
       getValue: () => cvData.projects[0]?.description || ''
+    },
+
+    // Industrie
+    {
+      pattern: '(Falls nicht zutreffend diese Zeile bitte löschen.)',
+      getValue: () => industries.join(', ') || ''
     },
   ];
 }
@@ -183,7 +176,7 @@ interface PptxReplacements {
 function getPptxReplacements(cvData: CVData): PptxReplacements[] {
   const fullName = cvData.personalInfo.name || 'Vorname Nachname';
 
-  // Skills formatieren
+  // Skills kategorisieren
   const businessSkills = cvData.skills.find(s =>
     s.category.toLowerCase().includes('business') || s.category.toLowerCase().includes('fach')
   )?.skills || [];
@@ -192,150 +185,132 @@ function getPptxReplacements(cvData: CVData): PptxReplacements[] {
     s.category.toLowerCase().includes('tech') || s.category.toLowerCase().includes('software')
   )?.skills || [];
 
-  // Industrien aus Projekten
-  const industries = [...new Set(cvData.projects
-    .filter(p => p.client)
-    .map(p => p.client!.split(/[,;]/)[0].trim())
-  )].slice(0, 3);
+  // Industry Experience
+  const industryExp = cvData.skills.find(s =>
+    s.category.toLowerCase().includes('industr') || s.category.toLowerCase().includes('branch')
+  )?.skills || [];
 
-  // Kunden formatieren
-  const clients = cvData.projects
+  // Kunden aus Projekten formatieren
+  const clients = [...new Set(cvData.projects
     .filter(p => p.client)
     .map(p => p.client!)
-    .slice(0, 4)
-    .join(', ');
+  )].slice(0, 8).join(', ');
 
   return [
+    // === HEADER SECTION ===
     // Name
     { search: 'First Name Last Name', replace: () => fullName },
-    { search: 'FirstName LastName', replace: () => fullName },
 
-    // Level/Position
-    { search: /Level(?=[\s,|])/g, replace: () => cvData.personalInfo.title || 'Consultant' },
+    // Level/Position - direkt nach Name
+    { search: 'Project Role', replace: () => cvData.personalInfo.title || 'Consultant' },
+    { search: 'Level', replace: () => cvData.personalInfo.title || 'Consultant' },
+
+    // Offering Portfolio
+    { search: 'Offering Portfolio', replace: () => 'Core Business Operations' },
+
+    // Talent Group
+    { search: 'Talent Group', replace: () => 'Banking and Capital Markets Transformation' },
 
     // Standort
-    { search: 'Germany, Office Location', replace: () => cvData.personalInfo.location || 'Deutschland' },
-    { search: 'Deutschland, Office Location', replace: () => cvData.personalInfo.location || 'Deutschland' },
+    { search: 'Germany, Office Location', replace: () => cvData.personalInfo.location || 'Germany, Cologne' },
+    { search: 'Deutschland, Office Location', replace: () => cvData.personalInfo.location || 'Deutschland, Köln' },
 
-    // Profil/Summary - Englisch
+    // === SUMMARY SECTION ===
+    // Englische Summary - kompletter Dummy-Text
     {
-      search: /Max has a professional experience.*?Resume text runs here\./gs,
+      search: /Max has a professional experience of five years.*?Resume text runs here\./gs,
       replace: () => cvData.summary || ''
     },
-    // Profil/Summary - Deutsch
+    // Deutsche Summary
     {
-      search: /Max verfügt über.*?Text läuft hier\./gs,
+      search: /Max verfügt über fünf Jahre Berufserfahrung.*?Text läuft hier\./gs,
       replace: () => cvData.summary || ''
     },
-
-    // Dummy-Texte ersetzen
+    // Zusätzliche Dummy-Text Patterns
     {
       search: /This is dummy text.*?populated with real text\./g,
       replace: () => ''
     },
     {
-      search: /Text läuft hier.*?gefüllt wird\./g,
-      replace: () => ''
-    },
-    {
-      search: /Resume text runs here.*?populated with real text\./g,
+      search: /dies ist Dummy-Text.*?gefüllt wird\./g,
       replace: () => ''
     },
 
-    // Education
-    {
-      search: "Master's degree",
-      replace: () => cvData.education[0]?.degree || "Master's degree"
-    },
-    {
-      search: 'Master-Abschluss',
-      replace: () => cvData.education[0]?.degree || 'Master-Abschluss'
-    },
-    {
-      search: 'Computer Science',
-      replace: () => cvData.education[0]?.field || 'Computer Science'
-    },
-    {
-      search: 'Informatik',
-      replace: () => cvData.education[0]?.field || 'Informatik'
-    },
-    {
-      search: 'Example University',
-      replace: () => cvData.education[0]?.institution || 'Universität'
-    },
-    {
-      search: 'Beispiel Universität',
-      replace: () => cvData.education[0]?.institution || 'Universität'
-    },
-    {
-      search: 'Example City',
-      replace: () => cvData.personalInfo.location?.split(',')[0] || 'Stadt'
-    },
-    {
-      search: 'Beispiel Stadt',
-      replace: () => cvData.personalInfo.location?.split(',')[0] || 'Stadt'
-    },
+    // === BUSINESS SKILLS ===
+    { search: 'Rewards Optimization', replace: () => businessSkills[0] || 'Project Management Office (PMO)' },
+    { search: 'Secure Application Development', replace: () => businessSkills[1] || 'IT Implementation' },
+    { search: 'Blockchain Platform', replace: () => businessSkills[2] || 'Process optimization' },
+    { search: 'Investment Management', replace: () => businessSkills[3] || 'Large Scale Transformation' },
+    // Deutsche Version
+    { search: 'Rewards Optimierung', replace: () => businessSkills[0] || 'Project Management Office (PMO)' },
+    { search: 'Sichere Anwendungsentwicklung', replace: () => businessSkills[1] || 'IT Implementation' },
+    { search: 'Blockchain Plattform', replace: () => businessSkills[2] || 'Prozessoptimierung' },
 
-    // Sprachen
-    { search: 'English C1', replace: () => cvData.languages[0] ? `${cvData.languages[0].language} ${cvData.languages[0].level}` : 'English C1' },
-    { search: 'French B1', replace: () => cvData.languages[1] ? `${cvData.languages[1].language} ${cvData.languages[1].level}` : '' },
-    { search: 'German C2', replace: () => cvData.languages[2] ? `${cvData.languages[2].language} ${cvData.languages[2].level}` : '' },
+    // === TECHNOLOGY SKILLS ===
+    { search: 'Data Warehouse Integrations', replace: () => techSkills[0] || 'ServiceNow' },
+    { search: 'Temenos: CRM', replace: () => techSkills[1] || 'MS Power BI, Automate, Apps' },
+    { search: 'SAP S/4HANA Cloud – Finance', replace: () => techSkills[2] || 'MS Dynamics CRM' },
+    { search: 'Agile 101', replace: () => techSkills[3] || 'MySQL' },
+    { search: 'Microsoft C#', replace: () => techSkills[4] || 'Adobe Creative Cloud' },
+
+    // === LANGUAGES ===
+    // Englische Slide
+    { search: 'English C1', replace: () => cvData.languages[0] ? `${cvData.languages[0].language} ${cvData.languages[0].level}` : 'German' },
+    { search: 'French B1', replace: () => cvData.languages[1] ? `${cvData.languages[1].language} ${cvData.languages[1].level}` : 'English' },
+    { search: 'German C2', replace: () => cvData.languages[2] ? `${cvData.languages[2].language} ${cvData.languages[2].level}` : 'Spanish' },
     { search: 'Polish A2', replace: () => cvData.languages[3] ? `${cvData.languages[3].language} ${cvData.languages[3].level}` : '' },
-    { search: 'Deutsch C2', replace: () => cvData.languages[0] ? `${cvData.languages[0].language} ${cvData.languages[0].level}` : 'Deutsch C2' },
-    { search: 'Englisch C1', replace: () => cvData.languages[1] ? `${cvData.languages[1].language} ${cvData.languages[1].level}` : '' },
-    { search: 'Französisch B1', replace: () => cvData.languages[2] ? `${cvData.languages[2].language} ${cvData.languages[2].level}` : '' },
+    // Deutsche Slide
+    { search: 'Deutsch C2', replace: () => cvData.languages[0] ? `${cvData.languages[0].language} ${cvData.languages[0].level}` : 'Deutsch' },
+    { search: 'Englisch C1', replace: () => cvData.languages[1] ? `${cvData.languages[1].language} ${cvData.languages[1].level}` : 'Englisch' },
+    { search: 'Französisch B1', replace: () => cvData.languages[2] ? `${cvData.languages[2].language} ${cvData.languages[2].level}` : 'Spanisch' },
     { search: 'Polnisch A2', replace: () => cvData.languages[3] ? `${cvData.languages[3].language} ${cvData.languages[3].level}` : '' },
 
-    // Zertifikate
-    { search: 'SAP Certified Associate Project Manager', replace: () => cvData.certifications[0] || 'SAP Certified' },
+    // === INDUSTRY EXPERIENCE ===
+    { search: 'Industrial Machinery and Components', replace: () => industryExp[0] || 'Banks (incl. apprenticeship)' },
+    { search: 'Automotive', replace: () => industryExp[1] || 'Insurances' },
+    { search: 'Health Care Providers', replace: () => industryExp[2] || 'Real Estate Industry' },
+    // Deutsche Version
+    { search: 'Industrie-Maschinen und Komponenten', replace: () => industryExp[0] || 'Banken (inkl. Ausbildung)' },
+    { search: 'Automobilindustrie', replace: () => industryExp[1] || 'Versicherungen' },
+    { search: 'Gesundheitssektor', replace: () => industryExp[2] || 'Immobilienwirtschaft' },
+
+    // === CERTIFICATES ===
+    { search: 'SAP Certified Associate Project Manager', replace: () => cvData.certifications[0] || '' },
     { search: 'Certified Management Accountant', replace: () => cvData.certifications[1] || '' },
     { search: 'Scrum Master', replace: () => cvData.certifications[2] || '' },
 
-    // Business Skills - Beispiele durch echte ersetzen
-    { search: 'Rewards Optimization', replace: () => businessSkills[0] || 'Business Consulting' },
-    { search: 'Secure Application Development', replace: () => businessSkills[1] || '' },
-    { search: 'Blockchain Platform', replace: () => businessSkills[2] || '' },
-    { search: 'Investment Management', replace: () => businessSkills[3] || '' },
-    { search: 'Rewards Optimierung', replace: () => businessSkills[0] || 'Business Consulting' },
-    { search: 'Sichere Anwendungsentwicklung', replace: () => businessSkills[1] || '' },
-    { search: 'Blockchain Plattform', replace: () => businessSkills[2] || '' },
+    // === EDUCATION ===
+    { search: "Master's degree", replace: () => cvData.education[0]?.degree || "Master of Science" },
+    { search: 'Master-Abschluss', replace: () => cvData.education[0]?.degree || 'Master of Science' },
+    { search: 'Computer Science', replace: () => cvData.education[0]?.field || 'International Management (CEMS)' },
+    { search: 'Informatik', replace: () => cvData.education[0]?.field || 'International Management (CEMS)' },
+    { search: 'Example University', replace: () => cvData.education[0]?.institution || 'University of Cologne' },
+    { search: 'Beispiel Universität', replace: () => cvData.education[0]?.institution || 'Universität zu Köln' },
+    { search: 'Example City', replace: () => 'Cologne' },
+    { search: 'Beispiel Stadt', replace: () => 'Köln' },
 
-    // Technology Skills
-    { search: 'Data Warehouse Integrations', replace: () => techSkills[0] || 'Data Analysis' },
-    { search: 'Temenos: CRM', replace: () => techSkills[1] || '' },
-    { search: 'SAP S/4HANA Cloud – Finance', replace: () => techSkills[2] || '' },
-    { search: 'Agile 101', replace: () => techSkills[3] || '' },
-    { search: 'Microsoft C#', replace: () => techSkills[4] || '' },
+    // === RELEVANT EXPERIENCE / PROJECTS ===
+    // Industrie Labels
+    { search: 'Industry: Automotive', replace: () => cvData.projects[0] ? `Industry: ${cvData.projects[0].client || 'Insurance'}` : 'Industry: Insurance' },
+    { search: 'Industry: Finance', replace: () => cvData.projects[1] ? `Industry: ${cvData.projects[1].client || 'Banking'}` : 'Industry: Banking' },
+    { search: 'Industry: Life Science', replace: () => cvData.projects[2] ? `Industry: ${cvData.projects[2].client || 'Asset Management'}` : 'Industry: Asset Management' },
+    { search: 'Industrie: Automobilindustrie', replace: () => cvData.projects[0] ? `Industrie: ${cvData.projects[0].client || 'Versicherung'}` : 'Industrie: Versicherung' },
+    { search: 'Industrie: Finanzsektor', replace: () => cvData.projects[1] ? `Industrie: ${cvData.projects[1].client || 'Banking'}` : 'Industrie: Banking' },
+    { search: 'Industrie: Naturwissenschaft', replace: () => cvData.projects[2] ? `Industrie: ${cvData.projects[2].client || 'Asset Management'}` : 'Industrie: Asset Management' },
 
-    // Industrien
-    { search: 'Industrial Machinery and Components', replace: () => industries[0] || 'Industrie' },
-    { search: 'Automotive', replace: () => industries[1] || 'Automotive' },
-    { search: 'Health Care Providers', replace: () => industries[2] || 'Healthcare' },
-    { search: 'Industrie-Maschinen und Komponenten', replace: () => industries[0] || 'Industrie' },
-    { search: 'Automobilindustrie', replace: () => industries[1] || 'Automotive' },
-    { search: 'Gesundheitssektor', replace: () => industries[2] || 'Healthcare' },
-
-    // Projekt-Industrien
-    { search: 'Industry: Automotive', replace: () => cvData.projects[0] ? `Industry: ${cvData.projects[0].client || 'Projekt'}` : '' },
-    { search: 'Industry: Finance', replace: () => cvData.projects[1] ? `Industry: ${cvData.projects[1].client || 'Projekt'}` : '' },
-    { search: 'Industry: Life Science', replace: () => cvData.projects[2] ? `Industry: ${cvData.projects[2].client || 'Projekt'}` : '' },
-    { search: 'Industrie: Automobilindustrie', replace: () => cvData.projects[0] ? `Industrie: ${cvData.projects[0].client || 'Projekt'}` : '' },
-    { search: 'Industrie: Finanzsektor', replace: () => cvData.projects[1] ? `Industrie: ${cvData.projects[1].client || 'Projekt'}` : '' },
-    { search: 'Industrie: Naturwissenschaft', replace: () => cvData.projects[2] ? `Industrie: ${cvData.projects[2].client || 'Projekt'}` : '' },
-
-    // Technologien in Projekten
+    // Technologien
     { search: 'Technology: Technology Skill A, Tool B, Method C', replace: () => {
       const proj = cvData.projects[0];
-      return proj?.technologies.length ? `Technology: ${proj.technologies.join(', ')}` : '';
+      return proj?.technologies?.length ? `Technology: ${proj.technologies.join(', ')}` : '';
     }},
     { search: 'Technologie: Technologiekompetenzen A, Tool B, Methode C', replace: () => {
       const proj = cvData.projects[0];
-      return proj?.technologies.length ? `Technologie: ${proj.technologies.join(', ')}` : '';
+      return proj?.technologies?.length ? `Technologie: ${proj.technologies.join(', ')}` : '';
     }},
 
-    // Kunden
-    { search: 'Client AG, Client Solutions GmbH, Example Client SE, Client Ltd.', replace: () => clients || 'Diverse Kunden' },
-    { search: 'Kunde AG, Kunde Solutions GmbH, Beispiel Kunde SE, Kunde Ltd.', replace: () => clients || 'Diverse Kunden' },
+    // === SELECTED CLIENTS ===
+    { search: 'Client AG, Client Solutions GmbH, Example Client SE, Client Ltd.', replace: () => clients || 'ERGO Group AG, Barmenia, Gothaer Finanzholding AG, Allianz Deutschland AG' },
+    { search: 'Kunde AG, Kunde Solutions GmbH, Beispiel Kunde SE, Kunde Ltd.', replace: () => clients || 'ERGO Group AG, Barmenia, Gothaer Finanzholding AG, Allianz Deutschland AG' },
   ];
 }
 

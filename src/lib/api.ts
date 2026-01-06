@@ -228,6 +228,42 @@ export function generateMockQuestions(files: UploadedFile[]): InterviewQuestion[
   return questions;
 }
 
+// AI Enhancement API
+interface EnhanceRequest {
+  type: 'experience' | 'project';
+  description: string;
+  keywords: string[];
+  position?: string;
+  company?: string;
+  role?: string;
+  industry?: string;
+}
+
+interface EnhanceResponse {
+  enhanced: string;
+}
+
+export async function enhanceDescription(
+  request: EnhanceRequest,
+  apiKey: string
+): Promise<EnhanceResponse> {
+  const response = await fetchWithRetry(`${API_BASE}/enhance`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-API-Key': apiKey,
+    },
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: response.statusText }));
+    throw new Error(error.error || `Enhancement fehlgeschlagen: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
 export function generateMockCV(
   interviewState: InterviewState,
   files: UploadedFile[]
@@ -262,11 +298,13 @@ export function generateMockCV(
       'Erfahrener Consultant mit fundierten Kenntnissen in Projektmanagement und digitaler Transformation.',
     experience: [
       {
+        id: crypto.randomUUID(),
         company: 'Beispiel Consulting GmbH',
         position: 'Senior Consultant',
         startDate: '2021',
         endDate: undefined,
         current: true,
+        isDeloitte: true,
         description:
           answers.projects?.[0]?.answer ||
           'Beratung von Großunternehmen in Fragen der digitalen Transformation.',
@@ -275,6 +313,7 @@ export function generateMockCV(
             'Erfolgreiche Implementierung eines neuen ERP-Systems mit 30% Effizienzsteigerung',
           'Leitung eines cross-funktionalen Teams mit 8 Mitarbeitern',
         ],
+        keywords: ['Digitale Transformation', 'ERP'],
         technologies: ['SAP', 'Power BI', 'Azure'],
       },
     ],
@@ -299,13 +338,18 @@ export function generateMockCV(
     ],
     projects: [
       {
+        id: crypto.randomUUID(),
         name: 'Digitale Transformation',
         client: 'Große deutsche Bank',
+        industry: 'Banking',
         role: 'Projektleiter',
+        startDate: '2022-01',
+        endDate: '2023-12',
         duration: '2022 - 2023',
         description: answers.projects?.[1]?.answer || 'Leitung der digitalen Transformation.',
         technologies: ['Azure', 'Power Platform'],
         achievements: ['Reduzierung der Durchlaufzeiten um 40%'],
+        keywords: ['Digitale Transformation', 'Banking'],
       },
     ],
   };
