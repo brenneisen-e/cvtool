@@ -17,7 +17,7 @@ interface FileUploaderProps {
   onContinue: () => void;
 }
 
-type FileCategory = 'template-docx' | 'template-pptx' | 'example-cv' | 'my-cv';
+type FileCategory = 'template-docx' | 'template-pptx' | 'example-cv-docx' | 'example-cv-pptx' | 'my-cv';
 
 interface FileCategoryConfig {
   id: FileCategory;
@@ -47,25 +47,32 @@ const categories: FileCategoryConfig[] = [
       'application/vnd.openxmlformats-officedocument.presentationml.presentation': ['.pptx'],
     },
     icon: Presentation,
-    required: false,
+    required: true,
   },
   {
-    id: 'example-cv',
-    title: 'Beispiel-CV',
-    description: 'Ausgefüllter CV als Referenz (DOCX/PPTX)',
+    id: 'example-cv-docx',
+    title: 'Beispiel-CV (DOCX)',
+    description: 'Ausgefüllter CV als Word-Referenz',
     accept: {
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
-      'application/vnd.openxmlformats-officedocument.presentationml.presentation': ['.pptx'],
-      'application/pdf': ['.pdf'],
-      'text/plain': ['.txt'],
     },
     icon: FileText,
     required: true,
   },
   {
+    id: 'example-cv-pptx',
+    title: 'Beispiel-CV (PPTX)',
+    description: 'Ausgefüllter CV als PowerPoint-Referenz',
+    accept: {
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation': ['.pptx'],
+    },
+    icon: Presentation,
+    required: true,
+  },
+  {
     id: 'my-cv',
     title: 'Mein CV',
-    description: 'Ihr aktueller Lebenslauf (DOCX/PPTX)',
+    description: 'Ihr aktueller Lebenslauf',
     accept: {
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
       'application/vnd.openxmlformats-officedocument.presentationml.presentation': ['.pptx'],
@@ -196,7 +203,7 @@ export function FileUploader({
 
       {!requiredFilesUploaded && (
         <p className="text-center text-white/60 text-sm mt-4">
-          Bitte laden Sie mindestens die DOCX-Vorlage, ein Beispiel-CV und Ihren CV hoch.
+          Bitte laden Sie alle Vorlagen, Beispiel-CVs und Ihren CV hoch.
         </p>
       )}
     </div>

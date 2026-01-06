@@ -1,11 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import type { UploadedFile, InterviewState, CVData, AppState } from '../types';
-import {
-  analyzeDocuments,
-  generateCV,
-  generateMockQuestions,
-  generateMockCV,
-} from '../lib/api';
+import { analyzeDocuments, generateCV } from '../lib/api';
 import { saveFile, getAllFiles, saveState, getState, clearAll } from '../lib/storage';
 
 interface UseAppStateReturn {
@@ -39,6 +34,7 @@ export function useAppState(): UseAppStateReturn {
     error: null,
   });
 
+  // useMockApi indicates whether user has their own key (false = server key will be used)
   const useMockApi = !apiKey.startsWith('sk-ant-');
 
   // Load saved state on mount
@@ -107,15 +103,9 @@ export function useAppState(): UseAppStateReturn {
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      let questions;
-
-      if (useMockApi) {
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        questions = generateMockQuestions(state.uploadedFiles);
-      } else {
-        const result = await analyzeDocuments(state.uploadedFiles, apiKey);
-        questions = result.questions;
-      }
+      // Always use real API (server has API key configured)
+      const result = await analyzeDocuments(state.uploadedFiles, apiKey);
+      const questions = result.questions;
 
       const interviewState: InterviewState = {
         questions,
@@ -136,7 +126,7 @@ export function useAppState(): UseAppStateReturn {
         error: error instanceof Error ? error.message : 'Analyse fehlgeschlagen',
       }));
     }
-  }, [useMockApi, state.uploadedFiles, apiKey]);
+  }, [state.uploadedFiles, apiKey]);
 
   const handleInterviewUpdate = useCallback((interviewState: InterviewState) => {
     setState((prev) => ({ ...prev, interviewState }));
@@ -148,15 +138,9 @@ export function useAppState(): UseAppStateReturn {
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      let cvData;
-
-      if (useMockApi) {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        cvData = generateMockCV(state.interviewState, state.uploadedFiles);
-      } else {
-        const result = await generateCV(state.interviewState, state.uploadedFiles, apiKey);
-        cvData = result.cvData;
-      }
+      // Always use real API (server has API key configured)
+      const result = await generateCV(state.interviewState, state.uploadedFiles, apiKey);
+      const cvData = result.cvData;
 
       setState((prev) => ({
         ...prev,
@@ -170,7 +154,7 @@ export function useAppState(): UseAppStateReturn {
         error: error instanceof Error ? error.message : 'CV-Generierung fehlgeschlagen',
       }));
     }
-  }, [useMockApi, state.interviewState, state.uploadedFiles, apiKey]);
+  }, [state.interviewState, state.uploadedFiles, apiKey]);
 
   const handleInterviewComplete = useCallback(() => {
     setState((prev) => ({ ...prev, currentStep: 3 }));
@@ -179,8 +163,8 @@ export function useAppState(): UseAppStateReturn {
 
   const stepsCompleted = useMemo(() => ({
     1: state.uploadedFiles.filter((f) =>
-      ['template-docx', 'example-cv', 'my-cv'].includes(f.type)
-    ).length >= 3,
+      ['template-docx', 'template-pptx', 'example-cv-docx', 'example-cv-pptx', 'my-cv'].includes(f.type)
+    ).length >= 5,
     2: state.interviewState?.isComplete || false,
     3: state.generatedCV !== null,
   }), [state.uploadedFiles, state.interviewState?.isComplete, state.generatedCV]);

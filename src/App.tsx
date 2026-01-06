@@ -52,18 +52,18 @@ function App() {
             </button>
           </div>
 
-          {/* API Key Input */}
+          {/* API Key Input (Optional) */}
           <div className="bg-white/5 rounded p-4">
             <div className="flex items-center gap-4">
               <label className="text-white/70 text-sm whitespace-nowrap">
-                Anthropic API Key:
+                API Key (optional):
               </label>
               <div className="flex-1 relative">
                 <input
                   type={showApiKey ? 'text' : 'password'}
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
-                  placeholder="sk-ant-api03-..."
+                  placeholder="Server-Key wird verwendet oder sk-ant-..."
                   className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded text-white text-sm placeholder-white/30 focus:outline-none focus:border-white/40"
                 />
                 <button
@@ -74,15 +74,15 @@ function App() {
                   {showApiKey ? 'Verbergen' : 'Anzeigen'}
                 </button>
               </div>
-              <span className={`text-xs px-2 py-1 rounded ${useMockApi ? 'bg-yellow-500/20 text-yellow-300' : 'bg-green-500/20 text-green-300'}`}>
-                {useMockApi ? 'Demo-Modus' : 'API aktiv'}
+              <span className={`text-xs px-2 py-1 rounded ${useMockApi ? 'bg-blue-500/20 text-blue-300' : 'bg-green-500/20 text-green-300'}`}>
+                {useMockApi ? 'Server-Key' : 'Eigener Key'}
               </span>
             </div>
-            {useMockApi && (
-              <p className="text-white/40 text-xs mt-2">
-                Ohne API-Key werden Demo-Daten verwendet. Holen Sie sich einen Key auf console.anthropic.com
-              </p>
-            )}
+            <p className="text-white/40 text-xs mt-2">
+              {useMockApi
+                ? 'Der auf dem Server konfigurierte API-Key wird verwendet.'
+                : 'Ihr eigener API-Key wird verwendet.'}
+            </p>
           </div>
         </div>
       </header>

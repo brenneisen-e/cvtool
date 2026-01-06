@@ -127,9 +127,9 @@ export async function generateCV(
   return response.json();
 }
 
-// Mock functions for development without API
+// Mock functions for development without API (kept for testing purposes)
 export function generateMockQuestions(files: UploadedFile[]): InterviewQuestion[] {
-  const hasExampleCV = files.some((f) => f.type === 'example-cv');
+  const hasExampleCV = files.some((f) => f.type === 'example-cv-docx' || f.type === 'example-cv-pptx');
   const myCV = files.find((f) => f.type === 'my-cv');
   const myContent = myCV?.content?.toLowerCase() || '';
 

@@ -9,13 +9,17 @@ interface RequestBody {
   documents: DocumentData[];
 }
 
-export const onRequestPost: PagesFunction = async (context) => {
-  // Get API key from header (sent by client)
-  const apiKey = context.request.headers.get('X-API-Key');
+interface Env {
+  ANTHROPIC_API_KEY?: string;
+}
+
+export const onRequestPost: PagesFunction<Env> = async (context) => {
+  // Get API key from header (client) or environment variable (server secret)
+  const apiKey = context.request.headers.get('X-API-Key') || context.env.ANTHROPIC_API_KEY;
 
   if (!apiKey) {
     return new Response(
-      JSON.stringify({ error: 'API-Schlüssel fehlt. Bitte geben Sie Ihren Anthropic API Key ein.' }),
+      JSON.stringify({ error: 'API-Schlüssel fehlt. Bitte konfigurieren Sie ANTHROPIC_API_KEY als Secret oder geben Sie einen Key ein.' }),
       { status: 401, headers: { 'Content-Type': 'application/json' } }
     );
   }
