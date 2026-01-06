@@ -68,13 +68,16 @@ export interface CVData {
 }
 
 export interface ExperienceEntry {
+  id: string;
   company: string;
   position: string;
   startDate: string;
   endDate?: string;
   current?: boolean;
+  isDeloitte: boolean; // War es bei Deloitte oder woanders?
   description: string;
   achievements: string[];
+  keywords: string[]; // Stichworte für KI-Enhancement
   technologies?: string[];
 }
 
@@ -98,13 +101,18 @@ export interface LanguageEntry {
 }
 
 export interface ProjectEntry {
+  id: string;
   name: string;
   client?: string;
+  industry: string; // Insurance, Banking, Asset Management
   role: string;
+  startDate: string;
+  endDate?: string;
   duration: string;
   description: string;
   technologies: string[];
   achievements: string[];
+  keywords: string[]; // Stichworte für KI-Enhancement
 }
 
 export interface AppState {
