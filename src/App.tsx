@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { FileDown, Upload } from 'lucide-react';
+import { FileDown, Upload, RotateCcw } from 'lucide-react';
 import { CVForm } from './components/CVForm';
 import { FileUploader } from './components/FileUploader';
-import { saveCV, loadCV } from './lib/cvStorage';
+import { saveCV, loadCV, clearCV } from './lib/cvStorage';
 import { enhanceDescription } from './lib/api';
 import { generateDocx, generatePptx, downloadBlob } from './lib/documentGenerator';
 import type { CVData, UploadedFile } from './types';
@@ -175,6 +175,19 @@ function App() {
     setUploadedFiles(files);
   }, []);
 
+  // Reset CV to default data
+  const handleResetCV = useCallback(async () => {
+    if (confirm('CV-Daten zurücksetzen? Alle Änderungen gehen verloren.')) {
+      try {
+        await clearCV();
+        setCvData(null);
+        window.location.reload();
+      } catch (err) {
+        console.error('Failed to reset CV:', err);
+      }
+    }
+  }, []);
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -215,6 +228,14 @@ function App() {
                 }`}
               >
                 Templates
+              </button>
+              <button
+                onClick={handleResetCV}
+                className="px-4 py-2 rounded text-sm bg-red-500/20 hover:bg-red-500/30 text-red-300 flex items-center gap-1"
+                title="CV auf Standarddaten zurücksetzen"
+              >
+                <RotateCcw className="w-4 h-4" />
+                Reset
               </button>
             </div>
           </div>
