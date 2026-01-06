@@ -11,10 +11,12 @@
   },
   "dependencies": {
     "docx": "^9.5.1",
+    "docxtemplater": "^3.67.6",
     "idb": "^8.0.3",
     "jszip": "^3.10.1",
     "lucide-react": "^0.562.0",
     "mammoth": "^1.11.0",
+    "pizzip": "^3.2.0",
     "pptxgenjs": "^4.0.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
