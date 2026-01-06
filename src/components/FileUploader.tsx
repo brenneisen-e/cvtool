@@ -52,9 +52,10 @@ const categories: FileCategoryConfig[] = [
   {
     id: 'example-cv',
     title: 'Beispiel-CV',
-    description: 'Ausgefüllter CV als Referenz',
+    description: 'Ausgefüllter CV als Referenz (DOCX/PPTX)',
     accept: {
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation': ['.pptx'],
       'application/pdf': ['.pdf'],
       'text/plain': ['.txt'],
     },
@@ -64,9 +65,10 @@ const categories: FileCategoryConfig[] = [
   {
     id: 'my-cv',
     title: 'Mein CV',
-    description: 'Ihr aktueller Lebenslauf',
+    description: 'Ihr aktueller Lebenslauf (DOCX/PPTX)',
     accept: {
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation': ['.pptx'],
       'application/pdf': ['.pdf'],
       'text/plain': ['.txt'],
     },
