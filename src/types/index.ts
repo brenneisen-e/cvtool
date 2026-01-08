@@ -52,19 +52,37 @@ export interface InterviewState {
 export interface CVData {
   personalInfo: {
     name: string;
-    title: string;
+    title: string; // Level: Senior Consultant, Manager, etc.
     email?: string;
     phone?: string;
     location?: string;
     linkedin?: string;
+    // Deloitte-spezifische Felder
+    nationality?: string;
+    offeringPortfolio?: string; // Strategy, Analytics and M&A; Customer & Marketing; Core Industry Operations; Human Capital; Enterprise Performance
+    marketOffering?: string;
+    talentGroup?: string;
+    industry?: string; // Financial Services, Insurance, etc.
   };
-  summary: string;
+  summary: string; // Profil (max. 15 Zeilen)
   experience: ExperienceEntry[];
   education: EducationEntry[];
   skills: SkillCategory[];
   certifications: string[];
   languages: LanguageEntry[];
   projects: ProjectEntry[];
+  // Deloitte DOCX-spezifische Felder
+  softwarePackages?: string[]; // Oracle, PeopleSoft, CRM Lösungen, etc.
+  softwareTools?: string[]; // MS Access, Java, etc.
+  trainings?: TrainingEntry[];
+  publications?: string[];
+  presentations?: string[];
+  memberships?: string[];
+}
+
+export interface TrainingEntry {
+  name: string;
+  date: string;
 }
 
 export interface ExperienceEntry {
