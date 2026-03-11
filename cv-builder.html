@@ -332,6 +332,10 @@
                 <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 Als PDF herunterladen
             </button>
+            <button class="download-btn" id="docxBtn" onclick="downloadDOCX()">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                Als DOCX herunterladen
+            </button>
         </div>
 
         <div class="preview-container">
@@ -492,7 +496,7 @@
         
         document.getElementById('accentColor').addEventListener('input', (e) => {
             document.documentElement.style.setProperty('--green', e.target.value);
-            document.querySelector('.download-btn').style.background = e.target.value;
+            document.querySelectorAll('.download-btn').forEach(b => b.style.background = e.target.value);
         });
 
         // PDF Download
@@ -530,4 +534,393 @@
                 alert('PDF-Erstellung fehlgeschlagen.');
             }
 
-            btn.innerHTML = '<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline poi
+            btn.innerHTML = '<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Als PDF herunterladen';
+            btn.disabled = false;
+        }
+
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+
+        // DOCX Download
+        async function downloadDOCX() {
+            const btn = document.getElementById('docxBtn');
+            btn.textContent = 'Wird erstellt...';
+            btn.disabled = true;
+
+            if (!window.docx) {
+                await loadScript('https://unpkg.com/docx@9.1.1/build/index.umd.js');
+            }
+
+            try {
+                const {
+                    Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
+                    WidthType, AlignmentType, BorderStyle, ShadingType, ImageRun,
+                    HeadingLevel, TableLayoutType, VerticalAlign, convertInchesToTwip,
+                    PageOrientation
+                } = docx;
+
+                const sidebarColor = document.getElementById('sidebarColor').value || '#1e4d91';
+                const accentColor = document.getElementById('accentColor').value || '#4aaa48';
+
+                // Helper to convert hex to docx color (without #)
+                const toColor = (hex) => hex.replace('#', '');
+
+                // Convert mm to twips (1mm = 56.7 twips)
+                const mmToTwip = (mm) => Math.round(mm * 56.7);
+
+                const pageWidth = mmToTwip(210);
+                const pageHeight = mmToTwip(297);
+                const sidebarWidth = Math.round(pageWidth * 0.35);
+                const mainWidth = pageWidth - sidebarWidth;
+
+                // Prepare circular photo
+                let photoBlob = null;
+                const photoEl = document.getElementById('cvPhoto');
+                if (photoEl && photoEl.src && photoEl.style.display !== 'none') {
+                    photoBlob = await createCircularPhoto(photoEl.src, 180);
+                } else if (photoData && photoData.startsWith('data:')) {
+                    photoBlob = await createCircularPhoto(photoData, 180);
+                }
+
+                // --- Build Sidebar Content ---
+                const sidebarCells = [];
+
+                // Photo
+                if (photoBlob) {
+                    sidebarCells.push(
+                        new Paragraph({
+                            alignment: AlignmentType.CENTER,
+                            spacing: { after: 200 },
+                            children: [
+                                new ImageRun({
+                                    data: photoBlob,
+                                    transformation: { width: 135, height: 135 },
+                                    type: 'png'
+                                })
+                            ]
+                        })
+                    );
+                }
+
+                // Sidebar section helper
+                function sidebarHeading(text) {
+                    return new Paragraph({
+                        spacing: { before: 200, after: 80 },
+                        children: [
+                            new TextRun({
+                                text: text.toUpperCase(),
+                                font: 'Arial',
+                                size: 13,
+                                bold: true,
+                                color: 'FFFFFF',
+                                characterSpacing: 60
+                            })
+                        ]
+                    });
+                }
+
+                function sidebarText(text, opts = {}) {
+                    return new Paragraph({
+                        spacing: { after: opts.after || 40 },
+                        children: [
+                            new TextRun({
+                                text: text,
+                                font: 'Arial',
+                                size: 15,
+                                color: opts.color || 'FFFFFF',
+                                bold: opts.bold || false,
+                                italics: opts.italics || false
+                            })
+                        ]
+                    });
+                }
+
+                // Kontakt
+                sidebarCells.push(sidebarHeading('Kontakt'));
+                sidebarCells.push(sidebarText('01726973954'));
+                sidebarCells.push(sidebarText('irena-marie.rentel@gmx.de'));
+                sidebarCells.push(sidebarText('50823 Köln, Schirmerstr. 18'));
+
+                // Tech Skills
+                sidebarCells.push(sidebarHeading('Tech Skills'));
+                ['Microsoft Office Suite', 'Adobe Creative Cloud', 'SPSS', 'Vivendi'].forEach(s => {
+                    sidebarCells.push(sidebarText(s));
+                });
+
+                // Pädagogik
+                sidebarCells.push(sidebarHeading('Pädagogik'));
+                ['TEACCH Ansatz', 'Weiterbildung Autismus Spektrum', 'Gewaltfreie Kommunikation', 'Personenzentrierter Ansatz'].forEach(s => {
+                    sidebarCells.push(sidebarText(s));
+                });
+
+                // Sprachen
+                sidebarCells.push(sidebarHeading('Sprachen'));
+                sidebarCells.push(sidebarText('Deutsch (Muttersprache)'));
+                sidebarCells.push(sidebarText('Englisch (Verhandlungssicher)'));
+
+                // Gut zu Wissen
+                sidebarCells.push(sidebarHeading('Gut zu Wissen'));
+                [
+                    'Teil des Talentförderprogramms der Diakonie',
+                    'Gründung und Aufbau Projekt UNI-Schule',
+                    'Teilnahme European Summer Academy in Sankt Petersburg'
+                ].forEach(s => {
+                    sidebarCells.push(sidebarText('• ' + s));
+                });
+
+                // Referenzen
+                sidebarCells.push(sidebarHeading('Referenzen'));
+                sidebarCells.push(sidebarText('Lydia Benjamin', { bold: true }));
+                sidebarCells.push(sidebarText('Bereichsleitung'));
+                sidebarCells.push(sidebarText('l.benjamin@diakonie-michaelshoven.de', { after: 120 }));
+                sidebarCells.push(sidebarText('Dr. Annette Hild-Berg', { bold: true }));
+                sidebarCells.push(sidebarText('Talentförderung'));
+                sidebarCells.push(sidebarText('a.hild-berg@diakonie-michaelshoven.de'));
+
+                // --- Build Main Content ---
+                const mainCells = [];
+
+                // Helper: no borders for table cells
+                function noBorders() {
+                    const none = { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' };
+                    return { top: none, bottom: none, left: none, right: none };
+                }
+
+                // Name and subtitle (header area)
+                mainCells.push(new Paragraph({
+                    spacing: { before: 0, after: 0 },
+                    children: [
+                        new TextRun({
+                            text: 'Irena Rentel',
+                            font: 'Georgia',
+                            size: 44,
+                            color: '1A1A2E'
+                        })
+                    ]
+                }));
+                mainCells.push(new Paragraph({
+                    spacing: { before: 0, after: 200 },
+                    children: [
+                        new TextRun({
+                            text: 'SOZIALPÄDAGOGIN B.A.',
+                            font: 'Georgia',
+                            size: 17,
+                            color: toColor(accentColor),
+                            characterSpacing: 80
+                        })
+                    ]
+                }));
+
+                // Section helper
+                function sectionTitle(text) {
+                    return [
+                        new Paragraph({
+                            spacing: { before: 250, after: 40 },
+                            children: [
+                                new TextRun({
+                                    text: text.toUpperCase(),
+                                    font: 'Arial',
+                                    size: 14,
+                                    bold: false,
+                                    color: toColor(accentColor).replace('#', ''),
+                                    characterSpacing: 80
+                                })
+                            ],
+                            border: {
+                                bottom: { style: BorderStyle.SINGLE, size: 3, color: toColor(accentColor) }
+                            }
+                        })
+                    ];
+                }
+
+                function expItem(role, meta, desc) {
+                    const paragraphs = [
+                        new Paragraph({
+                            spacing: { before: 120, after: 0 },
+                            children: [
+                                new TextRun({ text: role, font: 'Arial', size: 17, bold: true, color: '2C3E50' })
+                            ]
+                        }),
+                        new Paragraph({
+                            spacing: { before: 0, after: 40 },
+                            children: [
+                                new TextRun({ text: meta, font: 'Arial', size: 16, color: toColor(accentColor) })
+                            ]
+                        })
+                    ];
+                    if (desc) {
+                        desc.split('\n').forEach(line => {
+                            paragraphs.push(new Paragraph({
+                                spacing: { after: 20 },
+                                children: [
+                                    new TextRun({ text: line, font: 'Arial', size: 16, color: '4A4A5A' })
+                                ]
+                            }));
+                        });
+                    }
+                    return paragraphs;
+                }
+
+                // Profil
+                mainCells.push(...sectionTitle('Profil'));
+                mainCells.push(new Paragraph({
+                    spacing: { after: 80 },
+                    children: [
+                        new TextRun({
+                            text: 'Sozialpädagogin mit Management-Fokus. Fünf Jahre operative Erfahrung in der Sozialwirtschaft, jetzt bereit für den Wechsel in die Beratung – um Transformation nicht nur umzusetzen, sondern zu gestalten. Ich verbinde Praxiswissen aus Führung, Prozessoptimierung und Qualitätsentwicklung mit analytischem Denken und strategischem Blick.',
+                            font: 'Arial',
+                            size: 17,
+                            color: '4A4A5A'
+                        })
+                    ]
+                }));
+
+                // Berufserfahrung
+                mainCells.push(...sectionTitle('Berufserfahrung'));
+                mainCells.push(...expItem(
+                    'Sozialpädagogin',
+                    'PIA Lernbereich Werkstatt Diakonie Michaelshoven | 2020 - heute',
+                    'Aufbau einer beruflichen Tagesstruktur von jungen Erwachsenen mit psychischen Behinderungen. Fachpraxisstudierenden Anleitung. Eigenverantwortliches Controlling und Leistungsabrechnung'
+                ));
+                mainCells.push(...expItem(
+                    'Tutorin',
+                    'iba Köln | 2021 - 2024',
+                    'Theoriegestützte Anleitung und Betreuung von Studierenden bei der Erstellung wissenschaftlicher Arbeiten'
+                ));
+                mainCells.push(...expItem(
+                    'Projektassistenz',
+                    'OID Entwicklungszusammenarbeit Köln | 2019 - 2020',
+                    'Erstellung und Überarbeitung von Projektanträgen und Fortschrittsberichten (deutsch/englisch). Eigenständige Betreuung einer Unternehmenskampagne zur Unterstützung von Microschools'
+                ));
+
+                // Ausbildung
+                mainCells.push(...sectionTitle('Ausbildung'));
+                mainCells.push(...expItem(
+                    'Bachelor in Sozialpädagogik und Management',
+                    'iba Köln, 2024',
+                    'Notendurchschnitt 1,3  |  Jahrgangsbeste\nMitglied im Prüfungsausschuss\nBeschäftigt als Tutorin für wissenschaftliche Arbeiten\nThesis: Barrierefreiheit des Arbeitsmarkts für Menschen aus dem Autismus-Spektrum'
+                ));
+                mainCells.push(...expItem(
+                    'Bachelor in Politikwissenschaft und Soziologie',
+                    'Julius-Maximilians-Universität Würzburg, 2020',
+                    'Notendurchschnitt 2,9  |  Leitung Ehrenamtsprojekt UNI-Schule  |  Hilfswissenschaftliche Mitarbeiterin\nThesis: Weltmachtstellung Russlands'
+                ));
+
+                // --- Assemble Two-Column Table ---
+
+                const mainTable = new Table({
+                    rows: [
+                        new TableRow({
+                            children: [
+                                // Main content (left, 65%)
+                                new TableCell({
+                                    width: { size: mainWidth, type: WidthType.DXA },
+                                    borders: noBorders(),
+                                    margins: { top: 400, bottom: 400, left: 400, right: 400 },
+                                    children: mainCells.length > 0 ? mainCells : [new Paragraph('')],
+                                    verticalAlign: VerticalAlign.TOP
+                                }),
+                                // Sidebar (right, 35%)
+                                new TableCell({
+                                    width: { size: sidebarWidth, type: WidthType.DXA },
+                                    borders: noBorders(),
+                                    margins: { top: 300, bottom: 200, left: 200, right: 200 },
+                                    shading: { type: ShadingType.CLEAR, fill: toColor(sidebarColor) },
+                                    children: sidebarCells,
+                                    verticalAlign: VerticalAlign.TOP
+                                })
+                            ]
+                        })
+                    ],
+                    width: { size: pageWidth, type: WidthType.DXA },
+                    layout: TableLayoutType.FIXED
+                });
+
+                const doc = new Document({
+                    sections: [{
+                        properties: {
+                            page: {
+                                size: { width: pageWidth, height: pageHeight, orientation: PageOrientation.PORTRAIT },
+                                margin: { top: 0, bottom: 0, left: 0, right: 0 }
+                            }
+                        },
+                        children: [mainTable]
+                    }]
+                });
+
+                const blob = await Packer.toBlob(doc);
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'Lebenslauf_Irena_Rentel.docx';
+                a.click();
+                URL.revokeObjectURL(url);
+
+            } catch (error) {
+                console.error('DOCX Error:', error);
+                alert('DOCX-Erstellung fehlgeschlagen: ' + error.message);
+            }
+
+            btn.innerHTML = '<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Als DOCX herunterladen';
+            btn.disabled = false;
+        }
+
+        // Create circular photo from image source
+        async function createCircularPhoto(src, size) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = size;
+                    canvas.height = size;
+                    const ctx = canvas.getContext('2d');
+
+                    // Draw circular clip
+                    ctx.beginPath();
+                    ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+                    ctx.closePath();
+                    ctx.clip();
+
+                    // Draw image covering the circle
+                    const aspect = img.width / img.height;
+                    let sw, sh, sx, sy;
+                    if (aspect > 1) {
+                        sh = img.height;
+                        sw = img.height;
+                        sx = (img.width - sw) / 2;
+                        sy = 0;
+                    } else {
+                        sw = img.width;
+                        sh = img.width;
+                        sx = 0;
+                        sy = 0;
+                    }
+                    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, size, size);
+
+                    canvas.toBlob(blob => {
+                        blob.arrayBuffer().then(resolve).catch(reject);
+                    }, 'image/png');
+                };
+                img.onerror = reject;
+                img.src = src;
+            });
+        }
+
+        // Initialize photo
+        if (photoData) {
+            const img = document.getElementById('cvPhoto');
+            img.src = photoData;
+            img.style.display = 'block';
+            document.getElementById('photoPlaceholder').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
