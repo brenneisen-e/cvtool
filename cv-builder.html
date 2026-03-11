@@ -609,6 +609,11 @@
                     );
                 }
 
+                // --- Read content from DOM ---
+                const cvPage = document.getElementById('cvPage');
+                const mainEl = cvPage.querySelector('.main');
+                const sidebarEl = cvPage.querySelector('.sidebar');
+
                 // Sidebar section helper
                 function sidebarHeading(text) {
                     return new Paragraph({
@@ -642,49 +647,39 @@
                     });
                 }
 
-                // Kontakt
-                sidebarCells.push(sidebarHeading('Kontakt'));
-                sidebarCells.push(sidebarText('01726973954'));
-                sidebarCells.push(sidebarText('irena-marie.rentel@gmx.de'));
-                sidebarCells.push(sidebarText('50823 Köln, Schirmerstr. 18'));
+                // Read sidebar sections from DOM
+                sidebarEl.querySelectorAll('.sidebar-section').forEach(section => {
+                    const heading = section.querySelector('h3');
+                    if (heading) {
+                        sidebarCells.push(sidebarHeading(heading.textContent.trim()));
+                    }
 
-                // Tech Skills
-                sidebarCells.push(sidebarHeading('Tech Skills'));
-                ['Microsoft Office Suite', 'Adobe Creative Cloud', 'SPSS', 'Vivendi'].forEach(s => {
-                    sidebarCells.push(sidebarText(s));
+                    // Contact items
+                    section.querySelectorAll('.contact-item').forEach(item => {
+                        const text = item.textContent.trim().replace(/\s+/g, ' ');
+                        sidebarCells.push(sidebarText(text));
+                    });
+
+                    // Skill items (not contact, not reference)
+                    section.querySelectorAll('.skill-item').forEach(item => {
+                        const span = item.querySelector('span');
+                        const text = span ? span.textContent.trim() : item.textContent.trim();
+                        const hasIcon = item.classList.contains('skill-with-icon');
+                        sidebarCells.push(sidebarText(hasIcon ? '• ' + text : text));
+                    });
+
+                    // Reference items
+                    section.querySelectorAll('.reference-item').forEach((ref, idx) => {
+                        const name = ref.querySelector('.ref-name');
+                        const title = ref.querySelector('.ref-title');
+                        const email = ref.querySelector('.ref-email');
+                        if (name) sidebarCells.push(sidebarText(name.textContent.trim(), { bold: true }));
+                        if (title) sidebarCells.push(sidebarText(title.textContent.trim()));
+                        if (email) sidebarCells.push(sidebarText(email.textContent.trim(), { after: 120 }));
+                    });
                 });
 
-                // Pädagogik
-                sidebarCells.push(sidebarHeading('Pädagogik'));
-                ['TEACCH Ansatz', 'Weiterbildung Autismus Spektrum', 'Gewaltfreie Kommunikation', 'Personenzentrierter Ansatz'].forEach(s => {
-                    sidebarCells.push(sidebarText(s));
-                });
-
-                // Sprachen
-                sidebarCells.push(sidebarHeading('Sprachen'));
-                sidebarCells.push(sidebarText('Deutsch (Muttersprache)'));
-                sidebarCells.push(sidebarText('Englisch (Verhandlungssicher)'));
-
-                // Gut zu Wissen
-                sidebarCells.push(sidebarHeading('Gut zu Wissen'));
-                [
-                    'Teil des Talentförderprogramms der Diakonie',
-                    'Gründung und Aufbau Projekt UNI-Schule',
-                    'Teilnahme European Summer Academy in Sankt Petersburg'
-                ].forEach(s => {
-                    sidebarCells.push(sidebarText('• ' + s));
-                });
-
-                // Referenzen
-                sidebarCells.push(sidebarHeading('Referenzen'));
-                sidebarCells.push(sidebarText('Lydia Benjamin', { bold: true }));
-                sidebarCells.push(sidebarText('Bereichsleitung'));
-                sidebarCells.push(sidebarText('l.benjamin@diakonie-michaelshoven.de', { after: 120 }));
-                sidebarCells.push(sidebarText('Dr. Annette Hild-Berg', { bold: true }));
-                sidebarCells.push(sidebarText('Talentförderung'));
-                sidebarCells.push(sidebarText('a.hild-berg@diakonie-michaelshoven.de'));
-
-                // --- Build Main Content ---
+                // --- Build Main Content from DOM ---
                 const mainCells = [];
 
                 // Helper: no borders for table cells
@@ -693,30 +688,36 @@
                     return { top: none, bottom: none, left: none, right: none };
                 }
 
-                // Name and subtitle (header area)
-                mainCells.push(new Paragraph({
-                    spacing: { before: 0, after: 0 },
-                    children: [
-                        new TextRun({
-                            text: 'Irena Rentel',
-                            font: 'Georgia',
-                            size: 44,
-                            color: '1A1A2E'
-                        })
-                    ]
-                }));
-                mainCells.push(new Paragraph({
-                    spacing: { before: 0, after: 200 },
-                    children: [
-                        new TextRun({
-                            text: 'SOZIALPÄDAGOGIN B.A.',
-                            font: 'Georgia',
-                            size: 17,
-                            color: toColor(accentColor),
-                            characterSpacing: 80
-                        })
-                    ]
-                }));
+                // Name and subtitle
+                const nameEl = mainEl.querySelector('h1');
+                const subtitleEl = mainEl.querySelector('.subtitle');
+                if (nameEl) {
+                    mainCells.push(new Paragraph({
+                        spacing: { before: 0, after: 0 },
+                        children: [
+                            new TextRun({
+                                text: nameEl.textContent.trim(),
+                                font: 'Georgia',
+                                size: 44,
+                                color: '1A1A2E'
+                            })
+                        ]
+                    }));
+                }
+                if (subtitleEl) {
+                    mainCells.push(new Paragraph({
+                        spacing: { before: 0, after: 200 },
+                        children: [
+                            new TextRun({
+                                text: subtitleEl.textContent.trim(),
+                                font: 'Georgia',
+                                size: 17,
+                                color: toColor(accentColor),
+                                characterSpacing: 80
+                            })
+                        ]
+                    }));
+                }
 
                 // Section helper
                 function sectionTitle(text) {
@@ -768,50 +769,46 @@
                     return paragraphs;
                 }
 
-                // Profil
-                mainCells.push(...sectionTitle('Profil'));
-                mainCells.push(new Paragraph({
-                    spacing: { after: 80 },
-                    children: [
-                        new TextRun({
-                            text: 'Sozialpädagogin mit Management-Fokus. Fünf Jahre operative Erfahrung in der Sozialwirtschaft, jetzt bereit für den Wechsel in die Beratung – um Transformation nicht nur umzusetzen, sondern zu gestalten. Ich verbinde Praxiswissen aus Führung, Prozessoptimierung und Qualitätsentwicklung mit analytischem Denken und strategischem Blick.',
-                            font: 'Arial',
-                            size: 17,
-                            color: '4A4A5A'
-                        })
-                    ]
-                }));
+                // Read main sections from DOM
+                mainEl.querySelectorAll('.section').forEach(section => {
+                    const h2 = section.querySelector('h2');
+                    if (h2) {
+                        mainCells.push(...sectionTitle(h2.textContent.trim()));
+                    }
 
-                // Berufserfahrung
-                mainCells.push(...sectionTitle('Berufserfahrung'));
-                mainCells.push(...expItem(
-                    'Sozialpädagogin',
-                    'PIA Lernbereich Werkstatt Diakonie Michaelshoven | 2020 - heute',
-                    'Aufbau einer beruflichen Tagesstruktur von jungen Erwachsenen mit psychischen Behinderungen. Fachpraxisstudierenden Anleitung. Eigenverantwortliches Controlling und Leistungsabrechnung'
-                ));
-                mainCells.push(...expItem(
-                    'Tutorin',
-                    'iba Köln | 2021 - 2024',
-                    'Theoriegestützte Anleitung und Betreuung von Studierenden bei der Erstellung wissenschaftlicher Arbeiten'
-                ));
-                mainCells.push(...expItem(
-                    'Projektassistenz',
-                    'OID Entwicklungszusammenarbeit Köln | 2019 - 2020',
-                    'Erstellung und Überarbeitung von Projektanträgen und Fortschrittsberichten (deutsch/englisch). Eigenständige Betreuung einer Unternehmenskampagne zur Unterstützung von Microschools'
-                ));
+                    // Summary/profile text
+                    const summary = section.querySelector('.summary');
+                    if (summary) {
+                        mainCells.push(new Paragraph({
+                            spacing: { after: 80 },
+                            children: [
+                                new TextRun({
+                                    text: summary.textContent.trim(),
+                                    font: 'Arial',
+                                    size: 17,
+                                    color: '4A4A5A'
+                                })
+                            ]
+                        }));
+                    }
 
-                // Ausbildung
-                mainCells.push(...sectionTitle('Ausbildung'));
-                mainCells.push(...expItem(
-                    'Bachelor in Sozialpädagogik und Management',
-                    'iba Köln, 2024',
-                    'Notendurchschnitt 1,3  |  Jahrgangsbeste\nMitglied im Prüfungsausschuss\nBeschäftigt als Tutorin für wissenschaftliche Arbeiten\nThesis: Barrierefreiheit des Arbeitsmarkts für Menschen aus dem Autismus-Spektrum'
-                ));
-                mainCells.push(...expItem(
-                    'Bachelor in Politikwissenschaft und Soziologie',
-                    'Julius-Maximilians-Universität Würzburg, 2020',
-                    'Notendurchschnitt 2,9  |  Leitung Ehrenamtsprojekt UNI-Schule  |  Hilfswissenschaftliche Mitarbeiterin\nThesis: Weltmachtstellung Russlands'
-                ));
+                    // Experience/education items
+                    section.querySelectorAll('.exp-item').forEach(item => {
+                        const role = item.querySelector('.role');
+                        const meta = item.querySelector('.meta');
+                        const desc = item.querySelector('.desc');
+                        // Convert <br> to \n for line breaks in desc
+                        const descText = desc ? desc.innerHTML.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '').trim() : '';
+                        mainCells.push(...expItem(
+                            role ? role.textContent.trim() : '',
+                            meta ? meta.textContent.trim() : '',
+                            descText
+                        ));
+                    });
+                });
+
+                // Get name for filename
+                const cvName = nameEl ? nameEl.textContent.trim().replace(/\s+/g, '_') : 'Lebenslauf';
 
                 // --- Assemble Two-Column Table ---
 
@@ -859,7 +856,7 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'Lebenslauf_Irena_Rentel.docx';
+                a.download = 'Lebenslauf_' + cvName + '.docx';
                 a.click();
                 URL.revokeObjectURL(url);
 
