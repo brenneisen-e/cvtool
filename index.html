@@ -555,7 +555,7 @@
             btn.disabled = true;
 
             if (!window.docx) {
-                await loadScript('https://cdn.jsdelivr.net/npm/docx@9.1.1/build/index.umd.min.js?v=' + Date.now());
+                await loadScript('./docx.umd.js');
             }
 
             try {
