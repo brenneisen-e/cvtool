@@ -1,0 +1,366 @@
+:root {
+    /* ── Colors ── */
+    --sidebar-bg: #1e4d91;
+    --accent: #4aaa48;
+    --dark: #1a1a2e;
+    --light: #fafafa;
+    --gray: #4a4a5a;
+    --gray-light: #e5e7eb;
+    --white: #ffffff;
+
+    /* ── Page Layout (mm) ── */
+    --page-width: 210mm;
+    --page-height: 297mm;
+    --sidebar-width: 72mm;
+    --main-padding: 14mm;
+    --sidebar-padding-v: 8mm;
+    --sidebar-padding-h: 6mm;
+
+    /* ── Font Families (Word-compatible) ── */
+    --font-heading: Georgia, 'Playfair Display', serif;
+    --font-body: Arial, 'Work Sans', Helvetica, sans-serif;
+
+    /* ── Font Sizes (pt = physical, 1:1 to DOCX) ── */
+    --fs-name: 28pt;
+    --fs-subtitle: 10pt;
+    --fs-section-heading: 8pt;
+    --fs-summary: 11pt;
+    --fs-role: 12pt;
+    --fs-meta: 10pt;
+    --fs-desc: 10pt;
+    --fs-sidebar-heading: 7.5pt;
+    --fs-sidebar-text: 9pt;
+    --fs-sidebar-small: 8.5pt;
+    --fs-ref-email: 7.5pt;
+
+    /* ── Letter Spacing (pt) ── */
+    --ls-subtitle: 2pt;
+    --ls-section-heading: 1.5pt;
+    --ls-sidebar-heading: 1pt;
+
+    /* ── Line Heights ── */
+    --lh-summary: 1.6;
+    --lh-desc: 1.5;
+    --lh-sidebar: 1.4;
+
+    /* ── Spacing (pt) — maps to spacing.after in DOCX ── */
+    --sp-section-mb: 18pt;
+    --sp-subtitle-mb: 20pt;
+    --sp-h2-mb: 10pt;
+    --sp-h2-pb: 5pt;
+    --sp-exp-mb: 14pt;
+    --sp-meta-mb: 4pt;
+    --sp-sidebar-section-mb: 16pt;
+    --sp-sidebar-h3-mb: 6pt;
+    --sp-contact-mb: 5pt;
+    --sp-skill-py: 3pt;
+    --sp-ref-mb: 8pt;
+
+    /* Legacy aliases for color picker compatibility */
+    --blue: var(--sidebar-bg);
+    --green: var(--accent);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.app-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.header {
+    text-align: center;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 20px;
+    background: white;
+    padding: 15px 25px;
+    border-radius: 25px;
+    flex-wrap: wrap;
+}
+
+.controls label {
+    font-weight: 500;
+    color: var(--dark);
+}
+
+.controls input[type="color"] {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.download-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 500;
+    background: var(--accent);
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+}
+
+.download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+.download-btn .icon {
+    width: 18px;
+    height: 18px;
+}
+
+.preview-container {
+    background: #c0c0c0;
+    padding: 40px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+/* CV Page — DIN A4 */
+.cv-page {
+    width: var(--page-width);
+    height: var(--page-height);
+    background: white;
+    box-shadow: 0 25px 80px rgba(0,0,0,0.3);
+    display: grid;
+    grid-template-columns: 1fr var(--sidebar-width);
+    position: relative;
+    overflow: hidden;
+}
+
+.icon {
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+
+/* Main Content */
+.main {
+    padding: var(--main-padding);
+}
+
+.main h1 {
+    font-family: var(--font-heading);
+    font-size: var(--fs-name);
+    font-weight: 400;
+    color: var(--dark);
+}
+
+.main .subtitle {
+    color: var(--accent);
+    font-size: var(--fs-subtitle);
+    letter-spacing: var(--ls-subtitle);
+    margin-bottom: var(--sp-subtitle-mb);
+}
+
+.section {
+    margin-bottom: var(--sp-section-mb);
+}
+
+.section h2 {
+    font-size: var(--fs-section-heading);
+    letter-spacing: var(--ls-section-heading);
+    text-transform: uppercase;
+    color: var(--dark);
+    font-weight: bold;
+    margin-bottom: var(--sp-h2-mb);
+    padding-bottom: var(--sp-h2-pb);
+    border-bottom: 2px solid var(--accent);
+}
+
+.summary {
+    font-size: var(--fs-summary);
+    line-height: var(--lh-summary);
+    color: var(--gray);
+}
+
+.exp-item {
+    margin-bottom: var(--sp-exp-mb);
+}
+
+.exp-item .role {
+    font-size: var(--fs-role);
+    font-weight: 600;
+}
+
+.exp-item .meta {
+    font-size: var(--fs-meta);
+    color: var(--accent);
+    margin: 2pt 0 var(--sp-meta-mb);
+}
+
+.exp-item .desc {
+    font-size: var(--fs-desc);
+    color: var(--gray);
+    line-height: var(--lh-desc);
+}
+
+/* Sidebar */
+.sidebar {
+    background: var(--sidebar-bg);
+    color: var(--white);
+    padding: var(--sidebar-padding-v) var(--sidebar-padding-h);
+}
+
+.photo {
+    width: 42mm;
+    height: 42mm;
+    min-width: 42mm;
+    min-height: 42mm;
+    object-fit: cover;
+    object-position: center top;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+}
+
+.photo-container {
+    width: 42mm;
+    height: 42mm;
+    margin: 0 auto 4mm;
+    position: relative;
+}
+
+.photo-placeholder {
+    width: 42mm;
+    height: 42mm;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    border: 2px dashed rgba(255,255,255,0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: rgba(255,255,255,0.8);
+    font-size: 12px;
+    gap: 8px;
+    transition: all 0.3s;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.photo-placeholder:hover {
+    background: rgba(255,255,255,0.3);
+    border-color: rgba(255,255,255,0.8);
+}
+
+.sidebar-section {
+    margin-bottom: var(--sp-sidebar-section-mb);
+}
+
+.sidebar-section h3 {
+    font-size: var(--fs-sidebar-heading);
+    letter-spacing: var(--ls-sidebar-heading);
+    text-transform: uppercase;
+    margin-bottom: var(--sp-sidebar-h3-mb);
+    opacity: 0.8;
+    font-weight: bold;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 6pt;
+    font-size: var(--fs-sidebar-text);
+    margin-bottom: var(--sp-contact-mb);
+    line-height: var(--lh-sidebar);
+}
+
+.skill-item {
+    font-size: var(--fs-sidebar-small);
+    padding: var(--sp-skill-py) 0;
+    opacity: 0.9;
+    line-height: var(--lh-sidebar);
+}
+
+.skill-with-icon {
+    display: flex;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+.skill-with-icon .icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.reference-item {
+    font-size: var(--fs-sidebar-small);
+    margin-bottom: var(--sp-ref-mb);
+    line-height: var(--lh-sidebar);
+}
+
+.reference-item .ref-name {
+    font-weight: 600;
+}
+
+.reference-item .ref-title {
+    opacity: 0.8;
+}
+
+.reference-item .ref-email {
+    opacity: 0.7;
+    font-size: var(--fs-ref-email);
+}
+
+@media print {
+    body {
+        background: none;
+        padding: 0;
+    }
+    .header, .controls {
+        display: none !important;
+    }
+    .preview-container {
+        padding: 0;
+        background: none;
+    }
+    .cv-page {
+        box-shadow: none;
+    }
+    @page {
+        size: A4;
+        margin: 0;
+    }
+}
