@@ -20,49 +20,49 @@
             --page-width: 210mm;
             --page-height: 297mm;
             --sidebar-width: 72mm;
-            --main-padding: 13mm;
-            --sidebar-padding-v: 7mm;
-            --sidebar-padding-h: 5mm;
+            --main-padding: 14mm;
+            --sidebar-padding-v: 8mm;
+            --sidebar-padding-h: 6mm;
 
             /* ── Font Families (Word-compatible) ── */
             --font-heading: Georgia, 'Playfair Display', serif;
             --font-body: Arial, 'Work Sans', Helvetica, sans-serif;
 
             /* ── Font Sizes (pt = physical, 1:1 to DOCX) ── */
-            --fs-name: 20pt;
-            --fs-subtitle: 8pt;
-            --fs-section-heading: 7pt;
-            --fs-summary: 9pt;
-            --fs-role: 9.5pt;
-            --fs-meta: 8pt;
-            --fs-desc: 8pt;
-            --fs-sidebar-heading: 6.5pt;
-            --fs-sidebar-text: 7.5pt;
-            --fs-sidebar-small: 7pt;
-            --fs-ref-email: 6.5pt;
+            --fs-name: 28pt;
+            --fs-subtitle: 10pt;
+            --fs-section-heading: 8pt;
+            --fs-summary: 11pt;
+            --fs-role: 12pt;
+            --fs-meta: 10pt;
+            --fs-desc: 10pt;
+            --fs-sidebar-heading: 7.5pt;
+            --fs-sidebar-text: 9pt;
+            --fs-sidebar-small: 8.5pt;
+            --fs-ref-email: 7.5pt;
 
             /* ── Letter Spacing (pt) ── */
-            --ls-subtitle: 1.5pt;
+            --ls-subtitle: 2pt;
             --ls-section-heading: 1.5pt;
             --ls-sidebar-heading: 1pt;
 
             /* ── Line Heights ── */
-            --lh-summary: 1.4;
-            --lh-desc: 1.3;
-            --lh-sidebar: 1.25;
+            --lh-summary: 1.6;
+            --lh-desc: 1.5;
+            --lh-sidebar: 1.4;
 
             /* ── Spacing (pt) — maps to spacing.after in DOCX ── */
-            --sp-section-mb: 10pt;
-            --sp-subtitle-mb: 12pt;
-            --sp-h2-mb: 6pt;
-            --sp-h2-pb: 3pt;
-            --sp-exp-mb: 8pt;
-            --sp-meta-mb: 2pt;
-            --sp-sidebar-section-mb: 10pt;
-            --sp-sidebar-h3-mb: 4pt;
-            --sp-contact-mb: 3pt;
-            --sp-skill-py: 1.5pt;
-            --sp-ref-mb: 5pt;
+            --sp-section-mb: 18pt;
+            --sp-subtitle-mb: 20pt;
+            --sp-h2-mb: 10pt;
+            --sp-h2-pb: 5pt;
+            --sp-exp-mb: 14pt;
+            --sp-meta-mb: 4pt;
+            --sp-sidebar-section-mb: 16pt;
+            --sp-sidebar-h3-mb: 6pt;
+            --sp-contact-mb: 5pt;
+            --sp-skill-py: 3pt;
+            --sp-ref-mb: 8pt;
 
             /* Legacy aliases for color picker compatibility */
             --blue: var(--sidebar-bg);
@@ -545,49 +545,49 @@
             layout: {
                 sidebar_width_dxa: 4081,  // 72mm × 56.69
                 main_width_dxa: 7825,     // (210 - 72)mm × 56.69
-                main_padding_dxa: 737,    // 13mm × 56.69
-                sidebar_padding_v_dxa: 397, // 7mm × 56.69
-                sidebar_padding_h_dxa: 283, // 5mm × 56.69
+                main_padding_dxa: 794,    // 14mm × 56.69
+                sidebar_padding_v_dxa: 454, // 8mm × 56.69
+                sidebar_padding_h_dxa: 340, // 6mm × 56.69
             },
             // font sizes in half-points (hp) — docx-js convention: size = pt × 2
             fonts: {
-                name:            { family: 'Georgia',  size: 40 },  // 20pt
-                subtitle:        { family: 'Arial',    size: 16 },  // 8pt
-                section_heading: { family: 'Arial',    size: 14 },  // 7pt
-                summary:         { family: 'Arial',    size: 18 },  // 9pt
-                role:            { family: 'Arial',    size: 19 },  // 9.5pt
-                meta:            { family: 'Arial',    size: 16 },  // 8pt
-                desc:            { family: 'Arial',    size: 16 },  // 8pt
-                sidebar_heading: { family: 'Arial',    size: 13 },  // 6.5pt
-                sidebar_text:    { family: 'Arial',    size: 15 },  // 7.5pt
-                sidebar_small:   { family: 'Arial',    size: 14 },  // 7pt
-                ref_email:       { family: 'Arial',    size: 13 },  // 6.5pt
+                name:            { family: 'Georgia',  size: 56 },  // 28pt
+                subtitle:        { family: 'Arial',    size: 20 },  // 10pt
+                section_heading: { family: 'Arial',    size: 16 },  // 8pt
+                summary:         { family: 'Arial',    size: 22 },  // 11pt
+                role:            { family: 'Arial',    size: 24 },  // 12pt
+                meta:            { family: 'Arial',    size: 20 },  // 10pt
+                desc:            { family: 'Arial',    size: 20 },  // 10pt
+                sidebar_heading: { family: 'Arial',    size: 15 },  // 7.5pt
+                sidebar_text:    { family: 'Arial',    size: 18 },  // 9pt
+                sidebar_small:   { family: 'Arial',    size: 17 },  // 8.5pt
+                ref_email:       { family: 'Arial',    size: 15 },  // 7.5pt
             },
             // characterSpacing in twentieth-of-a-point (1pt = 20)
             letterSpacing: {
-                subtitle: 30,           // 1.5pt
+                subtitle: 40,           // 2pt
                 section_heading: 30,    // 1.5pt
                 sidebar_heading: 20,    // 1pt
             },
             // paragraph spacing in DXA (1pt = 20 DXA)
             spacing: {
-                section_mb: 200,        // 10pt
-                subtitle_mb: 240,       // 12pt
-                h2_mb: 120,             // 6pt
-                h2_pb: 60,              // 3pt (as border gap)
-                exp_mb: 160,            // 8pt
-                meta_mb: 40,            // 2pt
-                sidebar_section_mb: 200,// 10pt
-                sidebar_h3_mb: 80,      // 4pt
-                contact_mb: 60,         // 3pt
-                skill_py: 30,           // 1.5pt
-                ref_mb: 100,            // 5pt
+                section_mb: 360,        // 18pt
+                subtitle_mb: 400,       // 20pt
+                h2_mb: 200,             // 10pt
+                h2_pb: 100,             // 5pt (as border gap)
+                exp_mb: 280,            // 14pt
+                meta_mb: 80,            // 4pt
+                sidebar_section_mb: 320,// 16pt
+                sidebar_h3_mb: 120,     // 6pt
+                contact_mb: 100,        // 5pt
+                skill_py: 60,           // 3pt
+                ref_mb: 160,            // 8pt
             },
             // line spacing: multiplier × 240 (Word base)
             lineSpacing: {
-                summary: 336,           // 1.4 × 240
-                desc: 312,              // 1.3 × 240
-                sidebar: 300,           // 1.25 × 240
+                summary: 384,           // 1.6 × 240
+                desc: 360,              // 1.5 × 240
+                sidebar: 336,           // 1.4 × 240
             },
             colors: {
                 sidebar_bg: '1e4d91',
@@ -1039,17 +1039,17 @@
 
                 // Font sizes in pt (same as CSS tokens, direct to PptxGenJS)
                 const FS = {
-                    name: 20, subtitle: 8, section_heading: 7,
-                    summary: 9, role: 9.5, meta: 8, desc: 8,
-                    sidebar_heading: 6.5, sidebar_text: 7.5,
-                    sidebar_small: 7, ref_email: 6.5,
+                    name: 28, subtitle: 10, section_heading: 8,
+                    summary: 11, role: 12, meta: 10, desc: 10,
+                    sidebar_heading: 7.5, sidebar_text: 9,
+                    sidebar_small: 8.5, ref_email: 7.5,
                 };
 
                 // Letter spacing in pt (PptxGenJS charSpacing)
-                const CS = { subtitle: 3, section_heading: 3, sidebar_heading: 2 };
+                const CS = { subtitle: 4, section_heading: 3, sidebar_heading: 2 };
 
-                // Line spacing in pt (lineSpacingMultiple is × 100)
-                const LINE = { summary: 140, desc: 130, sidebar: 125 };
+                // Line spacing (lineSpacingMultiple is × 100)
+                const LINE = { summary: 160, desc: 150, sidebar: 140 };
 
                 const pptx = new PptxGenJS();
                 pptx.defineLayout({ name: 'A4_PORTRAIT', width: PAGE_W, height: PAGE_H });
@@ -1077,33 +1077,33 @@
                 const nameEl = mainEl.querySelector('h1');
                 if (nameEl) {
                     slide.addText(nameEl.textContent.trim(), {
-                        x: MAIN_PAD, y: yMain, w: contentW, h: 0.4,
+                        x: MAIN_PAD, y: yMain, w: contentW, h: 0.55,
                         fontFace: 'Georgia', fontSize: FS.name,
                         color: C.dark, valign: 'top'
                     });
-                    yMain += 0.4;
+                    yMain += 0.55;
                 }
 
                 // Subtitle
                 const subtitleEl = mainEl.querySelector('.subtitle');
                 if (subtitleEl) {
                     slide.addText(subtitleEl.textContent.trim(), {
-                        x: MAIN_PAD, y: yMain, w: contentW, h: 0.22,
+                        x: MAIN_PAD, y: yMain, w: contentW, h: 0.25,
                         fontFace: 'Arial', fontSize: FS.subtitle,
                         color: accent, charSpacing: CS.subtitle, valign: 'top'
                     });
-                    yMain += 0.22 + mmToIn(12); // + subtitle margin-bottom (12pt ≈ 4.2mm)
+                    yMain += 0.25 + mmToIn(20); // subtitle margin-bottom (20pt ≈ 7mm)
                 }
 
                 // Sections
                 mainEl.querySelectorAll('.section').forEach(section => {
                     const h2 = section.querySelector('h2');
                     if (h2) {
-                        yMain += mmToIn(3); // section top spacing
+                        yMain += mmToIn(6); // section top spacing (18pt ≈ 6mm)
 
                         // Section heading with bottom border
                         slide.addText(h2.textContent.trim().toUpperCase(), {
-                            x: MAIN_PAD, y: yMain, w: contentW, h: 0.2,
+                            x: MAIN_PAD, y: yMain, w: contentW, h: 0.22,
                             fontFace: 'Arial', fontSize: FS.section_heading,
                             bold: true, color: C.dark,
                             charSpacing: CS.section_heading, valign: 'bottom'
@@ -1111,25 +1111,27 @@
 
                         // Green underline
                         slide.addShape(pptx.shapes.RECTANGLE, {
-                            x: MAIN_PAD, y: yMain + 0.2, w: contentW, h: 0.02,
+                            x: MAIN_PAD, y: yMain + 0.22, w: contentW, h: 0.02,
                             fill: { color: accent }
                         });
-                        yMain += 0.2 + 0.02 + mmToIn(3);
+                        yMain += 0.22 + 0.02 + mmToIn(4);
                     }
 
                     // Summary
                     const summary = section.querySelector('.summary');
                     if (summary) {
                         const text = summary.textContent.trim();
-                        const lines = Math.ceil(text.length / 75);
-                        const h = lines * FS.summary * 1.4 / 72;
+                        // Calculate chars per line based on content width and font size
+                        const charsPerLine = Math.floor(contentW * 72 / (FS.summary * 0.55));
+                        const lines = Math.ceil(text.length / charsPerLine);
+                        const h = lines * FS.summary * 1.6 / 72;
                         slide.addText(text, {
-                            x: MAIN_PAD, y: yMain, w: contentW, h: Math.max(h, 0.4),
+                            x: MAIN_PAD, y: yMain, w: contentW, h: Math.max(h, 0.5),
                             fontFace: 'Arial', fontSize: FS.summary,
                             color: C.gray, valign: 'top',
                             lineSpacingMultiple: LINE.summary / 100
                         });
-                        yMain += Math.max(h, 0.4) + mmToIn(2);
+                        yMain += Math.max(h, 0.5) + mmToIn(3);
                     }
 
                     // Experience/education items
@@ -1140,38 +1142,39 @@
 
                         if (role) {
                             slide.addText(role.textContent.trim(), {
-                                x: MAIN_PAD, y: yMain, w: contentW, h: 0.18,
+                                x: MAIN_PAD, y: yMain, w: contentW, h: 0.22,
                                 fontFace: 'Arial', fontSize: FS.role,
                                 bold: true, color: C.dark, valign: 'top'
                             });
-                            yMain += 0.18;
+                            yMain += 0.22;
                         }
 
                         if (meta) {
                             slide.addText(meta.textContent.trim(), {
-                                x: MAIN_PAD, y: yMain, w: contentW, h: 0.16,
+                                x: MAIN_PAD, y: yMain, w: contentW, h: 0.2,
                                 fontFace: 'Arial', fontSize: FS.meta,
                                 color: accent, valign: 'top'
                             });
-                            yMain += 0.16;
+                            yMain += 0.2 + mmToIn(1.5);
                         }
 
                         if (desc) {
                             const descText = desc.innerHTML
                                 .replace(/<br\s*\/?>/gi, '\n')
                                 .replace(/<[^>]+>/g, '').trim();
-                            const lines = Math.ceil(descText.length / 80);
-                            const h = lines * FS.desc * 1.3 / 72;
+                            const charsPerLine = Math.floor(contentW * 72 / (FS.desc * 0.55));
+                            const lines = Math.ceil(descText.length / charsPerLine);
+                            const h = lines * FS.desc * 1.5 / 72;
                             slide.addText(descText, {
-                                x: MAIN_PAD, y: yMain, w: contentW, h: Math.max(h, 0.18),
+                                x: MAIN_PAD, y: yMain, w: contentW, h: Math.max(h, 0.22),
                                 fontFace: 'Arial', fontSize: FS.desc,
                                 color: C.gray, valign: 'top',
                                 lineSpacingMultiple: LINE.desc / 100
                             });
-                            yMain += Math.max(h, 0.18) + mmToIn(1);
+                            yMain += Math.max(h, 0.22) + mmToIn(1);
                         }
 
-                        yMain += mmToIn(2); // exp-item gap
+                        yMain += mmToIn(4); // exp-item gap (14pt ≈ 5mm)
                     });
                 });
 
@@ -1209,27 +1212,27 @@
                 sidebarEl.querySelectorAll('.sidebar-section').forEach(section => {
                     const heading = section.querySelector('h3');
                     if (heading) {
-                        ySb += mmToIn(3);
+                        ySb += mmToIn(5); // sidebar-section top gap (16pt ≈ 5.6mm)
                         slide.addText(heading.textContent.trim().toUpperCase(), {
-                            x: sbX, y: ySb, w: sbContentW, h: 0.16,
+                            x: sbX, y: ySb, w: sbContentW, h: 0.18,
                             fontFace: 'Arial', fontSize: FS.sidebar_heading,
                             bold: true, color: 'FFFFFF',
                             charSpacing: CS.sidebar_heading, valign: 'top',
                             transparency: 20
                         });
-                        ySb += 0.16 + mmToIn(2);
+                        ySb += 0.18 + mmToIn(2);
                     }
 
                     // Contact items
                     section.querySelectorAll('.contact-item').forEach(item => {
                         const text = item.textContent.trim().replace(/\s+/g, ' ');
                         slide.addText(text, {
-                            x: sbX, y: ySb, w: sbContentW, h: 0.15,
+                            x: sbX, y: ySb, w: sbContentW, h: 0.2,
                             fontFace: 'Arial', fontSize: FS.sidebar_text,
                             color: 'FFFFFF', valign: 'top',
                             lineSpacingMultiple: LINE.sidebar / 100
                         });
-                        ySb += 0.15 + mmToIn(1);
+                        ySb += 0.2 + mmToIn(1.5);
                     });
 
                     // Skill items
@@ -1238,12 +1241,12 @@
                         const text = span ? span.textContent.trim() : item.textContent.trim();
                         const prefix = item.classList.contains('skill-with-icon') ? '• ' : '';
                         slide.addText(prefix + text, {
-                            x: sbX, y: ySb, w: sbContentW, h: 0.14,
+                            x: sbX, y: ySb, w: sbContentW, h: 0.18,
                             fontFace: 'Arial', fontSize: FS.sidebar_small,
                             color: 'FFFFFF', valign: 'top',
                             transparency: 10
                         });
-                        ySb += 0.14 + mmToIn(0.5);
+                        ySb += 0.18 + mmToIn(1);
                     });
 
                     // Reference items
@@ -1254,27 +1257,27 @@
 
                         if (name) {
                             slide.addText(name.textContent.trim(), {
-                                x: sbX, y: ySb, w: sbContentW, h: 0.13,
+                                x: sbX, y: ySb, w: sbContentW, h: 0.17,
                                 fontFace: 'Arial', fontSize: FS.sidebar_text,
                                 bold: true, color: 'FFFFFF', valign: 'top'
                             });
-                            ySb += 0.13;
+                            ySb += 0.17;
                         }
                         if (title) {
                             slide.addText(title.textContent.trim(), {
-                                x: sbX, y: ySb, w: sbContentW, h: 0.13,
+                                x: sbX, y: ySb, w: sbContentW, h: 0.17,
                                 fontFace: 'Arial', fontSize: FS.sidebar_text,
                                 color: 'FFFFFF', valign: 'top', transparency: 20
                             });
-                            ySb += 0.13;
+                            ySb += 0.17;
                         }
                         if (email) {
                             slide.addText(email.textContent.trim(), {
-                                x: sbX, y: ySb, w: sbContentW, h: 0.12,
+                                x: sbX, y: ySb, w: sbContentW, h: 0.15,
                                 fontFace: 'Arial', fontSize: FS.ref_email,
                                 color: 'FFFFFF', valign: 'top', transparency: 30
                             });
-                            ySb += 0.12 + mmToIn(2);
+                            ySb += 0.15 + mmToIn(3);
                         }
                     });
                 });
