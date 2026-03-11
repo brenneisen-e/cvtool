@@ -2,6 +2,6 @@
   "name": "cvtool",
   "private": true,
   "scripts": {
-    "build": "mkdir -p dist && cp index.html dist/"
+    "build": "mkdir -p dist && cp index.html docx.umd.js dist/"
   }
 }
