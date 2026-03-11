@@ -39,7 +39,7 @@ async function downloadDOCX() {
         const photoEl = document.getElementById('cvPhoto');
         if (photoEl && photoEl.src && photoEl.style.display !== 'none') {
             photoBlob = await createCircularPhoto(photoEl.src, 360);
-        } else if (photoData && photoData.startsWith('data:')) {
+        } else if (typeof photoData !== 'undefined' && photoData && photoData.startsWith('data:')) {
             photoBlob = await createCircularPhoto(photoData, 360);
         }
 
@@ -53,7 +53,7 @@ async function downloadDOCX() {
         const noBorders = () => ({ top: noBorder, bottom: noBorder, left: noBorder, right: noBorder });
 
         // ══════════════════════════════════════
-        // SIDEBAR — all values from TOKENS
+        // SIDEBAR — explicit font+size on every TextRun
         // ══════════════════════════════════════
         const sidebarChildren = [];
 
@@ -77,20 +77,21 @@ async function downloadDOCX() {
                     font: F.sidebar_heading.family,
                     size: F.sidebar_heading.size,
                     bold: true,
-                    color: C.white,
+                    color: C.sidebar_text_dim,
                     characterSpacing: LS.sidebar_heading
                 })]
             });
         }
 
         function sidebarLine(text, opts = {}) {
+            const fontDef = opts.font || F.sidebar_text;
             return new Paragraph({
                 spacing: { after: opts.after || S.contact_mb, line: LN.sidebar },
                 children: [new TextRun({
                     text: text,
-                    font: (opts.font || F.sidebar_text).family,
-                    size: (opts.font || F.sidebar_text).size,
-                    color: C.white,
+                    font: fontDef.family,
+                    size: fontDef.size,
+                    color: opts.color || C.white,
                     bold: opts.bold || false
                 })]
             });
@@ -111,7 +112,10 @@ async function downloadDOCX() {
                 const span = item.querySelector('span');
                 const text = span ? span.textContent.trim() : item.textContent.trim();
                 const prefix = item.classList.contains('skill-with-icon') ? '• ' : '';
-                sidebarChildren.push(sidebarLine(prefix + text, { font: F.sidebar_small }));
+                sidebarChildren.push(sidebarLine(prefix + text, {
+                    font: F.sidebar_small,
+                    color: C.sidebar_text_soft
+                }));
             });
 
             section.querySelectorAll('.reference-item').forEach(ref => {
@@ -119,15 +123,17 @@ async function downloadDOCX() {
                 const title = ref.querySelector('.ref-title');
                 const email = ref.querySelector('.ref-email');
                 if (name) sidebarChildren.push(sidebarLine(name.textContent.trim(), { bold: true }));
-                if (title) sidebarChildren.push(sidebarLine(title.textContent.trim()));
+                if (title) sidebarChildren.push(sidebarLine(title.textContent.trim(), {
+                    color: C.sidebar_text_dim
+                }));
                 if (email) sidebarChildren.push(sidebarLine(email.textContent.trim(), {
-                    after: S.ref_mb, font: F.ref_email
+                    after: S.ref_mb, font: F.ref_email, color: C.sidebar_text_faint
                 }));
             });
         });
 
         // ══════════════════════════════════════
-        // MAIN CONTENT — all values from TOKENS
+        // MAIN CONTENT — explicit font+size on every TextRun
         // ══════════════════════════════════════
         const mainChildren = [];
         const nameEl = mainEl.querySelector('h1');
@@ -160,12 +166,17 @@ async function downloadDOCX() {
             }));
         }
 
-        // Section heading — dark text, green bottom border
+        // Section heading — dark text, accent bottom border with space param
         function sectionTitle(text) {
             return new Paragraph({
                 spacing: { before: S.section_mb, after: S.h2_mb },
                 border: {
-                    bottom: { style: BorderStyle.SINGLE, size: 4, color: accent }
+                    bottom: {
+                        style: BorderStyle.SINGLE,
+                        size: 4,
+                        color: accent,
+                        space: 5  // 5pt gap between text and border
+                    }
                 },
                 children: [new TextRun({
                     text: text.toUpperCase(),
@@ -178,7 +189,7 @@ async function downloadDOCX() {
             });
         }
 
-        // Experience/education item
+        // Experience/education item — explicit font+size on every run
         function expItem(role, meta, descText) {
             const p = [];
             p.push(new Paragraph({
@@ -328,7 +339,3 @@ async function downloadDOCX() {
     btn.innerHTML = '<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Als DOCX herunterladen';
     btn.disabled = false;
 }
-
-// ══════════════════════════════════════════════
-// PPTX EXPORT — Portrait DIN A4, absolute positioning
-// Uses TOKENS + PptxGenJS

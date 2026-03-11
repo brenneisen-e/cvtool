@@ -56,5 +56,9 @@ const TOKENS = {
         dark: '1a1a2e',
         gray: '4a4a5a',
         white: 'FFFFFF',
+        // Sidebar text variants (solid, no opacity — matches CSS)
+        sidebar_text_dim: 'c8d5e8',    // headings, ref-title
+        sidebar_text_faint: 'b4c5dc',  // ref-email
+        sidebar_text_soft: 'e4eaf2',   // skill items
     }
 };

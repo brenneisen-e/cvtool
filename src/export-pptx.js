@@ -227,9 +227,8 @@ async function downloadPPTX() {
                 slide.addText(heading.textContent.trim().toUpperCase(), {
                     x: sbX, y: ySb, w: sbContentW, h: hH,
                     fontFace: 'Arial', fontSize: FS.sidebar_heading,
-                    bold: true, color: 'FFFFFF',
-                    charSpacing: CS.sidebar_heading, valign: 'top',
-                    transparency: 20
+                    bold: true, color: C.sidebar_text_dim,
+                    charSpacing: CS.sidebar_heading, valign: 'top'
                 });
                 ySb += hH + mmToIn(1.5);
             }
@@ -257,8 +256,7 @@ async function downloadPPTX() {
                 slide.addText(fullText, {
                     x: sbX, y: ySb, w: sbContentW, h: h,
                     fontFace: 'Arial', fontSize: FS.sidebar_small,
-                    color: 'FFFFFF', valign: 'top',
-                    transparency: 10,
+                    color: C.sidebar_text_soft, valign: 'top',
                     lineSpacingMultiple: LINE.sidebar / 100
                 });
                 ySb += h + mmToIn(0.5);
@@ -286,7 +284,7 @@ async function downloadPPTX() {
                     slide.addText(t, {
                         x: sbX, y: ySb, w: sbContentW, h: h,
                         fontFace: 'Arial', fontSize: FS.sidebar_text,
-                        color: 'FFFFFF', valign: 'top', transparency: 20
+                        color: C.sidebar_text_dim, valign: 'top'
                     });
                     ySb += h;
                 }
@@ -296,7 +294,7 @@ async function downloadPPTX() {
                     slide.addText(t, {
                         x: sbX, y: ySb, w: sbContentW, h: h,
                         fontFace: 'Arial', fontSize: FS.ref_email,
-                        color: 'FFFFFF', valign: 'top', transparency: 30
+                        color: C.sidebar_text_faint, valign: 'top'
                     });
                     ySb += h + mmToIn(2);
                 }

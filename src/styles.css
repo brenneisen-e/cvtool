@@ -1,5 +1,5 @@
 :root {
-    /* ── Colors ── */
+    /* ── Colors (all solid hex — no rgba/opacity for DOCX parity) ── */
     --sidebar-bg: #1e4d91;
     --accent: #4aaa48;
     --dark: #1a1a2e;
@@ -7,6 +7,10 @@
     --gray: #4a4a5a;
     --gray-light: #e5e7eb;
     --white: #ffffff;
+    /* Sidebar text variants (pre-computed from white + opacity on blue bg) */
+    --sidebar-text-dim: #c8d5e8;    /* white @ 0.8 on #1e4d91 */
+    --sidebar-text-faint: #b4c5dc;  /* white @ 0.7 on #1e4d91 */
+    --sidebar-text-soft: #e4eaf2;   /* white @ 0.9 on #1e4d91 */
 
     /* ── Page Layout (mm) ── */
     --page-width: 210mm;
@@ -294,7 +298,7 @@ body {
     letter-spacing: var(--ls-sidebar-heading);
     text-transform: uppercase;
     margin-bottom: var(--sp-sidebar-h3-mb);
-    opacity: 0.8;
+    color: var(--sidebar-text-dim);
     font-weight: bold;
 }
 
@@ -310,7 +314,7 @@ body {
 .skill-item {
     font-size: var(--fs-sidebar-small);
     padding: var(--sp-skill-py) 0;
-    opacity: 0.9;
+    color: var(--sidebar-text-soft);
     line-height: var(--lh-sidebar);
 }
 
@@ -336,11 +340,11 @@ body {
 }
 
 .reference-item .ref-title {
-    opacity: 0.8;
+    color: var(--sidebar-text-dim);
 }
 
 .reference-item .ref-email {
-    opacity: 0.7;
+    color: var(--sidebar-text-faint);
     font-size: var(--fs-ref-email);
 }
 
