@@ -563,50 +563,28 @@
                     Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
                     WidthType, AlignmentType, BorderStyle, ShadingType, ImageRun,
                     HeadingLevel, TableLayoutType, VerticalAlign, convertInchesToTwip,
-                    PageOrientation
+                    PageOrientation, TabStopPosition, TabStopType
                 } = docx;
 
                 const sidebarColor = document.getElementById('sidebarColor').value || '#1e4d91';
                 const accentColor = document.getElementById('accentColor').value || '#4aaa48';
 
-                // Helper to convert hex to docx color (without #)
                 const toColor = (hex) => hex.replace('#', '');
-
-                // Convert mm to twips (1mm = 56.7 twips)
                 const mmToTwip = (mm) => Math.round(mm * 56.7);
 
-                const pageWidth = mmToTwip(210);
+                const pageWidth = mmToTwip(210);  // A4
                 const pageHeight = mmToTwip(297);
-                const sidebarWidth = Math.round(pageWidth * 0.35);
+                const sidebarWidthMm = 75;        // matches CSS grid-template-columns: 1fr 75mm
+                const sidebarWidth = mmToTwip(sidebarWidthMm);
                 const mainWidth = pageWidth - sidebarWidth;
 
                 // Prepare circular photo
                 let photoBlob = null;
                 const photoEl = document.getElementById('cvPhoto');
                 if (photoEl && photoEl.src && photoEl.style.display !== 'none') {
-                    photoBlob = await createCircularPhoto(photoEl.src, 180);
+                    photoBlob = await createCircularPhoto(photoEl.src, 360);
                 } else if (photoData && photoData.startsWith('data:')) {
-                    photoBlob = await createCircularPhoto(photoData, 180);
-                }
-
-                // --- Build Sidebar Content ---
-                const sidebarCells = [];
-
-                // Photo
-                if (photoBlob) {
-                    sidebarCells.push(
-                        new Paragraph({
-                            alignment: AlignmentType.CENTER,
-                            spacing: { after: 200 },
-                            children: [
-                                new ImageRun({
-                                    data: photoBlob,
-                                    transformation: { width: 135, height: 135 },
-                                    type: 'png'
-                                })
-                            ]
-                        })
-                    );
+                    photoBlob = await createCircularPhoto(photoData, 360);
                 }
 
                 // --- Read content from DOM ---
@@ -614,15 +592,42 @@
                 const mainEl = cvPage.querySelector('.main');
                 const sidebarEl = cvPage.querySelector('.sidebar');
 
-                // Sidebar section helper
+                // --- No borders helper ---
+                const noBorder = { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' };
+                function noBorders() {
+                    return { top: noBorder, bottom: noBorder, left: noBorder, right: noBorder };
+                }
+
+                // ============================================
+                // SIDEBAR CONTENT
+                // ============================================
+                const sidebarChildren = [];
+
+                // Photo
+                if (photoBlob) {
+                    sidebarChildren.push(
+                        new Paragraph({
+                            alignment: AlignmentType.CENTER,
+                            spacing: { after: 200 },
+                            children: [
+                                new ImageRun({
+                                    data: photoBlob,
+                                    transformation: { width: 140, height: 140 },
+                                    type: 'png'
+                                })
+                            ]
+                        })
+                    );
+                }
+
                 function sidebarHeading(text) {
                     return new Paragraph({
-                        spacing: { before: 200, after: 80 },
+                        spacing: { before: 240, after: 100 },
                         children: [
                             new TextRun({
                                 text: text.toUpperCase(),
                                 font: 'Arial',
-                                size: 13,
+                                size: 14,          // 7pt - matches CSS 0.6rem
                                 bold: true,
                                 color: 'FFFFFF',
                                 characterSpacing: 60
@@ -631,17 +636,16 @@
                     });
                 }
 
-                function sidebarText(text, opts = {}) {
+                function sidebarLine(text, opts = {}) {
                     return new Paragraph({
-                        spacing: { after: opts.after || 40 },
+                        spacing: { after: opts.after || 30 },
                         children: [
                             new TextRun({
                                 text: text,
                                 font: 'Arial',
-                                size: 15,
-                                color: opts.color || 'FFFFFF',
-                                bold: opts.bold || false,
-                                italics: opts.italics || false
+                                size: opts.size || 16,  // 8pt - matches CSS 0.75rem
+                                color: 'FFFFFF',
+                                bold: opts.bold || false
                             })
                         ]
                     });
@@ -651,121 +655,145 @@
                 sidebarEl.querySelectorAll('.sidebar-section').forEach(section => {
                     const heading = section.querySelector('h3');
                     if (heading) {
-                        sidebarCells.push(sidebarHeading(heading.textContent.trim()));
+                        sidebarChildren.push(sidebarHeading(heading.textContent.trim()));
                     }
 
                     // Contact items
                     section.querySelectorAll('.contact-item').forEach(item => {
                         const text = item.textContent.trim().replace(/\s+/g, ' ');
-                        sidebarCells.push(sidebarText(text));
+                        sidebarChildren.push(sidebarLine(text));
                     });
 
-                    // Skill items (not contact, not reference)
+                    // Skill items
                     section.querySelectorAll('.skill-item').forEach(item => {
                         const span = item.querySelector('span');
                         const text = span ? span.textContent.trim() : item.textContent.trim();
                         const hasIcon = item.classList.contains('skill-with-icon');
-                        sidebarCells.push(sidebarText(hasIcon ? '• ' + text : text));
+                        sidebarChildren.push(sidebarLine(hasIcon ? '• ' + text : text, { size: 15 }));
                     });
 
                     // Reference items
-                    section.querySelectorAll('.reference-item').forEach((ref, idx) => {
+                    section.querySelectorAll('.reference-item').forEach(ref => {
                         const name = ref.querySelector('.ref-name');
                         const title = ref.querySelector('.ref-title');
                         const email = ref.querySelector('.ref-email');
-                        if (name) sidebarCells.push(sidebarText(name.textContent.trim(), { bold: true }));
-                        if (title) sidebarCells.push(sidebarText(title.textContent.trim()));
-                        if (email) sidebarCells.push(sidebarText(email.textContent.trim(), { after: 120 }));
+                        if (name) sidebarChildren.push(sidebarLine(name.textContent.trim(), { bold: true }));
+                        if (title) sidebarChildren.push(sidebarLine(title.textContent.trim()));
+                        if (email) sidebarChildren.push(sidebarLine(email.textContent.trim(), { after: 120, size: 14 }));
                     });
                 });
 
-                // --- Build Main Content from DOM ---
-                const mainCells = [];
+                // ============================================
+                // MAIN CONTENT
+                // ============================================
+                const mainChildren = [];
 
-                // Helper: no borders for table cells
-                function noBorders() {
-                    const none = { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' };
-                    return { top: none, bottom: none, left: none, right: none };
-                }
-
-                // Name and subtitle
                 const nameEl = mainEl.querySelector('h1');
                 const subtitleEl = mainEl.querySelector('.subtitle');
+
+                // Name - large, Playfair Display style (Georgia as fallback)
                 if (nameEl) {
-                    mainCells.push(new Paragraph({
+                    mainChildren.push(new Paragraph({
                         spacing: { before: 0, after: 0 },
                         children: [
                             new TextRun({
                                 text: nameEl.textContent.trim(),
                                 font: 'Georgia',
-                                size: 44,
+                                size: 52,           // 26pt - matches CSS 2.2rem
                                 color: '1A1A2E'
                             })
                         ]
                     }));
                 }
+
+                // Subtitle - green, letter-spaced
                 if (subtitleEl) {
-                    mainCells.push(new Paragraph({
-                        spacing: { before: 0, after: 200 },
+                    mainChildren.push(new Paragraph({
+                        spacing: { before: 0, after: 300 },
                         children: [
                             new TextRun({
                                 text: subtitleEl.textContent.trim(),
-                                font: 'Georgia',
-                                size: 17,
+                                font: 'Arial',
+                                size: 18,           // 9pt - matches CSS 0.85rem
                                 color: toColor(accentColor),
-                                characterSpacing: 80
+                                characterSpacing: 40
                             })
                         ]
                     }));
                 }
 
-                // Section helper
+                // Section heading - dark text with green bottom border (matches CSS h2)
                 function sectionTitle(text) {
-                    return [
-                        new Paragraph({
-                            spacing: { before: 250, after: 40 },
-                            children: [
-                                new TextRun({
-                                    text: text.toUpperCase(),
-                                    font: 'Arial',
-                                    size: 14,
-                                    bold: false,
-                                    color: toColor(accentColor).replace('#', ''),
-                                    characterSpacing: 80
-                                })
-                            ],
-                            border: {
-                                bottom: { style: BorderStyle.SINGLE, size: 3, color: toColor(accentColor) }
-                            }
-                        })
-                    ];
+                    return new Paragraph({
+                        spacing: { before: 280, after: 120 },
+                        border: {
+                            bottom: { style: BorderStyle.SINGLE, size: 4, color: toColor(accentColor) }
+                        },
+                        children: [
+                            new TextRun({
+                                text: text.toUpperCase(),
+                                font: 'Arial',
+                                size: 15,           // 7.5pt - matches CSS 0.7rem
+                                bold: true,
+                                color: '1A1A2E',    // dark color, NOT green
+                                characterSpacing: 60
+                            })
+                        ]
+                    });
                 }
 
-                function expItem(role, meta, desc) {
-                    const paragraphs = [
-                        new Paragraph({
-                            spacing: { before: 120, after: 0 },
+                // Experience/education item
+                function expItem(role, meta, descText) {
+                    const paragraphs = [];
+
+                    // Role title - bold
+                    paragraphs.push(new Paragraph({
+                        spacing: { before: 140, after: 0 },
+                        children: [
+                            new TextRun({
+                                text: role,
+                                font: 'Arial',
+                                size: 20,           // 10pt - matches CSS ~1rem default
+                                bold: true,
+                                color: '1A1A2E'
+                            })
+                        ]
+                    }));
+
+                    // Meta line - green (org, dates)
+                    if (meta) {
+                        paragraphs.push(new Paragraph({
+                            spacing: { before: 20, after: 50 },
                             children: [
-                                new TextRun({ text: role, font: 'Arial', size: 17, bold: true, color: '2C3E50' })
+                                new TextRun({
+                                    text: meta,
+                                    font: 'Arial',
+                                    size: 17,       // 8.5pt - matches CSS 0.8rem
+                                    color: toColor(accentColor)
+                                })
                             ]
-                        }),
-                        new Paragraph({
-                            spacing: { before: 0, after: 40 },
-                            children: [
-                                new TextRun({ text: meta, font: 'Arial', size: 16, color: toColor(accentColor) })
-                            ]
-                        })
-                    ];
-                    if (desc) {
-                        desc.split('\n').forEach(line => {
-                            paragraphs.push(new Paragraph({
-                                spacing: { after: 20 },
-                                children: [
-                                    new TextRun({ text: line, font: 'Arial', size: 16, color: '4A4A5A' })
-                                ]
-                            }));
+                        }));
+                    }
+
+                    // Description lines
+                    if (descText) {
+                        descText.split('\n').forEach(line => {
+                            if (line.trim()) {
+                                paragraphs.push(new Paragraph({
+                                    spacing: { after: 20 },
+                                    children: [
+                                        new TextRun({
+                                            text: line.trim(),
+                                            font: 'Arial',
+                                            size: 17,   // 8.5pt - matches CSS 0.8rem
+                                            color: '4A4A5A'
+                                        })
+                                    ]
+                                }));
+                            }
                         });
                     }
+
                     return paragraphs;
                 }
 
@@ -773,19 +801,19 @@
                 mainEl.querySelectorAll('.section').forEach(section => {
                     const h2 = section.querySelector('h2');
                     if (h2) {
-                        mainCells.push(...sectionTitle(h2.textContent.trim()));
+                        mainChildren.push(sectionTitle(h2.textContent.trim()));
                     }
 
                     // Summary/profile text
                     const summary = section.querySelector('.summary');
                     if (summary) {
-                        mainCells.push(new Paragraph({
-                            spacing: { after: 80 },
+                        mainChildren.push(new Paragraph({
+                            spacing: { after: 100 },
                             children: [
                                 new TextRun({
                                     text: summary.textContent.trim(),
                                     font: 'Arial',
-                                    size: 17,
+                                    size: 19,       // 9.5pt - matches CSS 0.9rem
                                     color: '4A4A5A'
                                 })
                             ]
@@ -797,9 +825,8 @@
                         const role = item.querySelector('.role');
                         const meta = item.querySelector('.meta');
                         const desc = item.querySelector('.desc');
-                        // Convert <br> to \n for line breaks in desc
                         const descText = desc ? desc.innerHTML.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '').trim() : '';
-                        mainCells.push(...expItem(
+                        mainChildren.push(...expItem(
                             role ? role.textContent.trim() : '',
                             meta ? meta.textContent.trim() : '',
                             descText
@@ -810,27 +837,31 @@
                 // Get name for filename
                 const cvName = nameEl ? nameEl.textContent.trim().replace(/\s+/g, '_') : 'Lebenslauf';
 
-                // --- Assemble Two-Column Table ---
+                // ============================================
+                // ASSEMBLE TWO-COLUMN TABLE
+                // ============================================
+                // Padding values matching CSS: main padding 40px ≈ 14mm ≈ 800 twip
+                // sidebar padding 30px top, 20px sides ≈ 10mm/7mm
 
                 const mainTable = new Table({
                     rows: [
                         new TableRow({
                             children: [
-                                // Main content (left, 65%)
+                                // Main content (left column)
                                 new TableCell({
                                     width: { size: mainWidth, type: WidthType.DXA },
                                     borders: noBorders(),
-                                    margins: { top: 400, bottom: 400, left: 400, right: 400 },
-                                    children: mainCells.length > 0 ? mainCells : [new Paragraph('')],
+                                    margins: { top: 600, bottom: 400, left: 600, right: 500 },
+                                    children: mainChildren.length > 0 ? mainChildren : [new Paragraph('')],
                                     verticalAlign: VerticalAlign.TOP
                                 }),
-                                // Sidebar (right, 35%)
+                                // Sidebar (right column) with blue background
                                 new TableCell({
                                     width: { size: sidebarWidth, type: WidthType.DXA },
                                     borders: noBorders(),
-                                    margins: { top: 300, bottom: 200, left: 200, right: 200 },
+                                    margins: { top: 400, bottom: 300, left: 300, right: 300 },
                                     shading: { type: ShadingType.CLEAR, fill: toColor(sidebarColor) },
-                                    children: sidebarCells,
+                                    children: sidebarChildren.length > 0 ? sidebarChildren : [new Paragraph('')],
                                     verticalAlign: VerticalAlign.TOP
                                 })
                             ]
