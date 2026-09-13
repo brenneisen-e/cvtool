@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eike Brenneisen — Cover Letter &amp; CV | Manager, Finance Transformation</title>
+<style>
+  @font-face { font-family: 'Uniform'; src: url('fonts/uniform-light.woff2') format('woff2');
+               font-weight: 300; font-style: normal; }
+  @font-face { font-family: 'Uniform'; src: url('fonts/uniform-regular.woff2') format('woff2');
+               font-weight: 400; font-style: normal; }
+  @font-face { font-family: 'Uniform'; src: url('fonts/uniform-medium.woff2') format('woff2');
+               font-weight: 500 900; font-style: normal; }
+
+  :root {
+    --green: #86BC25;
+    --green-dark: #046A38;
+    --ink: #101010;
+    --body: #2b2b2b;
+    --muted: #6b6b6b;
+    --panel: #eef3e6;
+    --side-bg: #f6f8f2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  @page { size: A4; margin: 0; }
+
+  body {
+    font-family: 'Uniform', "Segoe UI", Arial, Helvetica, sans-serif;
+    font-weight: 300;
+    color: var(--body);
+    background: #e9e9e9;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .page {
+    width: 210mm; height: 297mm;
+    background: #fff;
+    margin: 0 auto 8mm;
+    padding: 14mm 15mm 11mm;
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+
+  @media print {
+    body { background: #fff; }
+    .page { margin: 0; page-break-after: always; }
+    .page:last-child { page-break-after: auto; }
+  }
+
+  /* ── Header ─────────────────────────────── */
+  .head { border-bottom: 2.5px solid var(--green); padding-bottom: 3.5mm; margin-bottom: 4.5mm; }
+  .head .row { display: flex; justify-content: space-between; align-items: flex-end; gap: 8mm; }
+  .name { font-size: 25pt; font-weight: 300; color: var(--ink); letter-spacing: -0.3pt; line-height: 1.05; }
+  .name strong { font-weight: 500; }
+  strong, b { font-weight: 500; }
+  .target { font-size: 10.5pt; color: var(--green-dark); font-weight: 700; margin-top: 1.4mm; }
+  .role-now { font-size: 8.6pt; color: var(--muted); margin-top: 0.8mm; }
+  .contact { text-align: right; font-size: 8pt; line-height: 1.72; white-space: nowrap; }
+  .contact div { display: flex; align-items: center; justify-content: flex-end; gap: 2mm; }
+  .contact svg { width: 3.3mm; height: 3.3mm; stroke: var(--green-dark); flex: none; }
+
+  /* ── Sections ───────────────────────────── */
+  h2 {
+    font-size: 9pt; font-weight: 700; color: var(--ink);
+    text-transform: uppercase; letter-spacing: 0.9pt;
+    display: flex; align-items: center; gap: 2.2mm;
+    border-bottom: 1.5px solid var(--green); padding-bottom: 1.1mm; margin-bottom: 2.6mm;
+  }
+  h2 svg { width: 3.8mm; height: 3.8mm; stroke: var(--green-dark); flex: none; }
+  h2 { margin-bottom: 3.4mm; }
+  section { margin-bottom: 7mm; }
+  section:last-child { margin-bottom: 0; }
+
+  .cols { display: flex; gap: 6mm; flex: 1; min-height: 0; }
+  .col-main { flex: 1 1 62%; min-width: 0; }
+  .col-side {
+    flex: 0 0 31%;
+    background: var(--side-bg);
+    border-top: 2px solid var(--green);
+    padding: 4.5mm 4mm 2mm;
+    align-self: stretch;
+  }
+
+  .summary { font-size: 8.9pt; line-height: 1.65; text-align: justify; }
+  .summary strong { color: var(--ink); font-weight: 700; }
+
+  .job { margin-bottom: 5.2mm; }
+  .job:last-child { margin-bottom: 0; }
+  .job-head { display: flex; justify-content: space-between; align-items: baseline; gap: 4mm; }
+  .job-title { font-size: 9.6pt; font-weight: 700; color: var(--ink); line-height: 1.3; }
+  .job-date { font-size: 8pt; color: var(--muted); font-weight: 600; white-space: nowrap; }
+  .job-org { font-size: 8.4pt; color: var(--green-dark); font-weight: 600; margin: 0.5mm 0 1.4mm; line-height: 1.35; }
+  ul { list-style: none; }
+  li { font-size: 8.6pt; line-height: 1.55; padding-left: 3.6mm; position: relative; margin-bottom: 1.8mm; }
+  li::before { content: ""; position: absolute; left: 0; top: 1.5mm; width: 1.3mm; height: 1.3mm; background: var(--green); }
+  li strong { color: var(--ink); font-weight: 700; }
+
+  /* ── Sidebar ────────────────────────────── */
+  .col-side h3 {
+    font-size: 7.8pt; font-weight: 700; color: var(--ink);
+    text-transform: uppercase; letter-spacing: 0.6pt; margin-bottom: 1.6mm;
+  }
+  .col-side .block { margin-bottom: 5.5mm; }
+  .tags { display: flex; flex-wrap: wrap; gap: 1.1mm; }
+  .tag { font-size: 7.6pt; background: var(--panel); border-left: 1.6px solid var(--green); padding: 0.8mm 1.6mm; }
+  .tag-brand { display: inline-flex; align-items: center; gap: 1.4mm; }
+  .brand { width: 3.2mm; height: 3.2mm; fill: var(--ink); flex: none; }
+  .tag-note { font-size: 7.4pt; color: var(--muted); margin-top: 1.2mm; line-height: 1.4; }
+  .side-list { font-size: 8.2pt; line-height: 1.5; }
+  .side-list div { margin-bottom: 1.4mm; }
+  .side-list div { padding-left: 3mm; position: relative; margin-bottom: 0.9mm; }
+  .side-list div::before { content: ""; position: absolute; left: 0; top: 1.3mm; width: 1.2mm; height: 1.2mm; background: var(--green); }
+  .lang { display: flex; justify-content: space-between; font-size: 8.2pt; margin-bottom: 0.8mm; }
+  .lang span:last-child { color: var(--muted); font-size: 7.6pt; }
+
+  /* ── Impact figures ─────────────────────── */
+  .figures { display: flex; gap: 2.6mm; margin-bottom: 6.5mm; }
+  .fig { flex: 1; background: var(--panel); border-top: 2px solid var(--green); padding: 2.6mm 2.4mm 2.8mm; }
+  .fig-val { font-size: 11pt; font-weight: 500; color: var(--green-dark); line-height: 1.15; }
+  .fig-lab { font-size: 6.8pt; color: var(--muted); line-height: 1.3; margin-top: 0.8mm; }
+
+  /* ── Education ──────────────────────────── */
+  .edu { margin-bottom: 3.6mm; }
+  .edu-deg { font-size: 8.8pt; font-weight: 700; color: var(--ink); line-height: 1.3; }
+  .edu-org { font-size: 8.2pt; color: var(--green-dark); font-weight: 600; }
+  .edu-meta { font-size: 8pt; color: var(--muted); line-height: 1.4; }
+
+  /* ── Cover letter ───────────────────────── */
+  .letter { font-size: 9.1pt; line-height: 1.54; display: flex; flex-direction: column; flex: 1; }
+  .letter .date { font-size: 8.4pt; color: var(--muted); text-align: right; margin-bottom: 3mm; }
+  .letter .to { font-size: 8.4pt; color: var(--muted); line-height: 1.55; margin-bottom: 4.5mm; }
+  .letter .subject { font-size: 11.5pt; font-weight: 700; color: var(--ink); line-height: 1.35; }
+  .letter .subject-sub { font-size: 8.8pt; color: var(--green-dark); font-weight: 600; margin: 1mm 0 4mm; }
+  .letter p { margin-bottom: 2.9mm; text-align: justify; }
+  .letter p strong { color: var(--ink); font-weight: 700; }
+  .letter p:last-of-type { margin-bottom: 1.5mm; }
+  .letter .sign { margin-top: 1.5mm; }
+  .letter .sign .nm { font-weight: 700; color: var(--ink); font-size: 10.5pt; margin-top: 1.5mm; }
+  .letter .sign .rl { font-size: 8.2pt; color: var(--muted); }
+
+  /* ── Footer ─────────────────────────────── */
+  .foot {
+    margin-top: auto; padding-top: 2.6mm; border-top: 1px solid #d8d8d8;
+    display: flex; justify-content: space-between; font-size: 7pt; color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ PAGE 1 — COVER LETTER ══════════════════ -->
+<div class="page">
+
+  <div class="head">
+    <div class="row">
+      <div>
+        <div class="name">Eike <strong>Brenneisen</strong></div>
+        <div class="target">Manager · Banking &amp; Capital Markets Transformation</div>
+        <div class="role-now">Core Business Operations · Deloitte Germany, Cologne</div>
+      </div>
+      <div class="contact">
+        <div>eike@brenneisen.info
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
+        </div>
+        <div>+49 171 5518420
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>
+        </div>
+        <div>Cologne, Germany
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div>linkedin.com/in/eike-brenneisen
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="letter">
+
+    <div class="date">Cologne, 13 September 2026</div>
+
+    <div class="to">
+      Deloitte Australia · Talent Acquisition<br>
+      ETP Business Finance Offering — Finance Transformation, Technology &amp; Transformation
+    </div>
+
+    <div class="subject">Application: Manager | Finance Transformation (Requisition 41731)</div>
+    <div class="subject-sub">Internal application for an international transfer from Deloitte Germany</div>
+
+    <p>Dear Finance Transformation team,</p>
+
+    <p>
+      Ten years ago I left Australia with an expiring Work and Holiday visa and a fairly specific promise to myself: come back one day — but next time with something worth bringing. <strong>This application is me keeping it.</strong>
+    </p>
+
+    <p>
+      Financial services is going through more change at once than at almost any point I can remember. Regulation keeps tightening, demographics are reshaping both the workforce and the customer base, and above all <strong>technology and AI are rewriting how finance functions are actually run</strong> — not making the old model faster, but replacing it. It is a rare wave, and <strong>I am swimming at the front of it</strong>. In practice that means I no longer hand a finance leader a deck about their future steering model: I hand them a <strong>working tool, built with AI on their own data in a matter of days</strong>, where they move the parameters themselves and watch the P&amp;L react in front of them. The conversation is a different one when the numbers are live in the room. I am a <strong>Manager in Banking &amp; Capital Markets Transformation at Deloitte Germany</strong>, and I would like to ride that wave with your practice.
+    </p>
+
+    <p>
+      Underneath it sit three things. The first is <strong>practical grounding in the finance function itself</strong>. I trained as a <strong>certified bank clerk (Bankkaufmann)</strong>, advised private and corporate clients on financing and investments, and worked in accounting through year-end close before moving into consulting via a <strong>CEMS Master in International Management</strong>. I know how finance and accounting processes behave in daily operation, not only in a target picture — which is why my recommendations survive contact with the people who run them.
+    </p>
+
+    <p>
+      The second is <strong>consulting delivery</strong>. I have led integrated finance and performance transformation programs end to end — <strong>operating model design, process improvement, data foundations and technology enablement</strong> — through multiple go-lives and migrations, and reported the derivations directly to the board. I have worked on <strong>several large post-merger integrations</strong>, most recently as sub-project lead for compensation harmonisation in a major insurance merger, where the task was to make an unpopular change land by showing precisely what it meant for each person affected. Planning, forecasting and scenario simulation, profitability and cost management, and management reporting are the substance of that work. Alongside it I lead small teams, and the part I enjoy most is coaching people into ownership earlier than they expect.
+    </p>
+
+    <p>
+      The third is <strong>tooling, and increasingly AI</strong>. I have made a habit of moving into whatever is next, and right now that is AI hands-on: my current engagement is the <strong>implementation of AI-enabled sales processes at a major insurer</strong> — real operations, not a pilot deck. Before that I established a <strong>new AI use-case approach</strong> in my practice — functional prototypes built on the client's own data instead of slide decks — and grew a portfolio of tools around it — an AI sales workstation for banks and insurers, AI-assisted control and credit analysis — and from late September I am presenting a firm-wide webinar series on the AI use-case model behind it. What makes this work is that I sit on <strong>both sides at once</strong>: grounded in the business, where I own the case and the finance logic, and fluent in how software actually gets built. That is the most useful place to stand in a transformation — close enough to the business to know what is genuinely needed, and close enough to delivery to build it.
+    </p>
+
+    <p>
+      What I am looking for now is to <strong>take that practical, consulting and tooling experience international</strong>: to learn how finance transformation is done in the Australian market, and equally to contribute what I have built in Germany to your practice. That exchange, in both directions, is the real reason for this application — and I would welcome the chance to discuss where I could be most useful.
+    </p>
+
+    <div class="sign">
+      Kind regards,
+      <div class="nm">Eike Brenneisen</div>
+      <div class="rl">Manager · Banking &amp; Capital Markets Transformation · Deloitte Germany</div>
+    </div>
+
+  </div>
+
+  <div class="foot">
+    <span>Eike Brenneisen — Cover letter</span>
+    <span>Manager | Finance Transformation (41731) · Deloitte Australia</span>
+    <span>1 / 3</span>
+  </div>
+</div>
+
+<!-- ══════════════════ PAGE 2 — CV 1 ══════════════════ -->
+<div class="page">
+
+  <div class="head">
+    <div class="row">
+      <div>
+        <div class="name">Eike <strong>Brenneisen</strong></div>
+        <div class="target">Manager | Finance Transformation — Requisition 41731</div>
+        <div class="role-now">Manager, Banking &amp; Capital Markets Transformation · Deloitte Germany</div>
+      </div>
+      <div class="contact">
+        <div>eike@brenneisen.info
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
+        </div>
+        <div>+49 171 5518420
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>
+        </div>
+        <div>Cologne, Germany · open to relocation
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div>linkedin.com/in/eike-brenneisen
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="figures">
+    <div class="fig"><div class="fig-val">13 yrs</div><div class="fig-lab">In financial services — banking, insurance, asset management</div></div>
+    <div class="fig"><div class="fig-val">AI hands-on</div><div class="fig-lab">New AI use-case approach established; 15+ tools built, two in production</div></div>
+    <div class="fig"><div class="fig-val">Business + IT</div><div class="fig-lab">Expertise end to end, grounded in practice as a trained banker</div></div>
+    <div class="fig"><div class="fig-val">2016/17</div><div class="fig-lab">A year lived in Australia — back now for the exchange, both ways</div></div>
+  </div>
+
+  <div class="cols">
+    <div class="col-main">
+
+      <section>
+        <h2>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+          Profile
+        </h2>
+        <p class="summary">
+          Manager in Banking &amp; Capital Markets Transformation at Deloitte Germany, in <strong>financial services since 2013</strong>. I lead <strong>finance, performance and cost transformation programs</strong> end to end — target operating model, process redesign, data foundation, implementation and go-live — with <strong>board-level exposure</strong>. My edge: I <strong>build the solution myself with AI</strong>, having established a <strong>new AI use-case approach</strong> in which working prototypes replace slide decks. I am <strong>business and build in equal measure</strong>: I know what the client needs, and I can build it.
+        </p>
+      </section>
+
+      <section>
+        <h2>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+          Selected Engagements
+        </h2>
+
+        <div class="job">
+          <div class="job-head">
+            <div class="job-title">AI Implementation Lead — Sales Process Automation</div>
+            <div class="job-date">2026 – present</div>
+          </div>
+          <div class="job-org">Major German insurance group · Deloitte delivery role</div>
+          <ul>
+            <li>Leading the hands-on implementation of <strong>AI-enabled sales processes</strong> — from use-case identification and process redesign to solutions running in live operations.</li>
+            <li>Setting the practical standard for AI in the business: <strong>where automation genuinely removes effort</strong>, what stays with a human, and how the benefit is evidenced rather than asserted.</li>
+          </ul>
+        </div>
+
+        <div class="job">
+          <div class="job-head">
+            <div class="job-title">Sub-Project Lead — Compensation Harmonisation (PMI)</div>
+            <div class="job-date">2025 – 2026</div>
+          </div>
+          <div class="job-org">Major German insurance merger · Deloitte delivery lead · team of 3</div>
+          <ul>
+            <li>Led the <strong>harmonisation of two incompatible compensation models</strong> after a major insurance merger — the largest variable cost block in the merged entity.</li>
+            <li>Designed and ran the <strong>end-to-end simulation</strong> across <strong>1,000+ sales partners</strong>, giving the board a fact base to set target parameters.</li>
+            <li>Conceived an <strong>interactive migration tool</strong> showing each partner their earnings under the new model — <strong>adopted by the client as a productised deliverable</strong>.</li>
+          </ul>
+        </div>
+
+        <div class="job">
+          <div class="job-head">
+            <div class="job-title">Program Lead — Performance Management &amp; Sales Steering</div>
+            <div class="job-date">2022 – 2024</div>
+          </div>
+          <div class="job-org">Major German insurance group · acting manager · multi-year program · team of 3</div>
+          <ul>
+            <li>Directed <strong>strategic program management</strong> for a multi-year transformation of the sales and steering organisation — operating model, processes, data and systems in one program.</li>
+            <li>Owned the <strong>planning and simulation model</strong> behind the target steering logic; <strong>presented derivations directly to the board</strong>.</li>
+            <li>Delivered <strong>multiple go-lives and data migrations</strong> to plan, through cut-over and hypercare.</li>
+          </ul>
+        </div>
+
+      </section>
+
+    </div>
+
+    <div class="col-side">
+
+      <div class="block">
+        <h3>Finance Transformation</h3>
+        <div class="side-list">
+          <div>Target operating model design</div>
+          <div>Planning, forecasting &amp; simulation</div>
+          <div>Profitability &amp; cost management</div>
+          <div>Management &amp; board reporting</div>
+          <div>Process improvement &amp; automation</div>
+          <div>Post-merger integration (PMI)</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <h3>AI &amp; Automation</h3>
+        <div class="tags">
+          <span class="tag">AI use-case identification</span>
+          <span class="tag">AI-assisted development</span>
+          <span class="tag">Prototype to production</span>
+          <span class="tag">Robotic process automation (RPA)</span>
+        </div>
+      </div>
+
+      <div class="block">
+        <h3>Technology</h3>
+        <div class="tags">
+          <span class="tag tag-brand"><svg class="brand" viewBox="0 0 24 24" aria-hidden="true"><path d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z"/></svg>Claude Code</span>
+          <span class="tag tag-brand"><svg class="brand" viewBox="0 0 24 24" aria-hidden="true"><path d="M0 6.064v11.872h12.13L24 6.064zm3.264 2.208h.005c.863.001 1.915.245 2.676.633l-.82 1.43c-.835-.404-1.255-.442-1.73-.467-.708-.038-1.064.215-1.069.488-.007.332.669.633 1.305.838.964.306 2.19.715 2.377 1.9L7.77 8.437h2.046l2.064 5.576-.007-5.575h2.37c2.257 0 3.318.764 3.318 2.519 0 1.575-1.09 2.514-2.936 2.514h-.763l-.01 2.094-3.588-.003-.25-.908c-.37.122-.787.189-1.23.189-.456 0-.885-.071-1.263-.2l-.358.919-2 .006.09-.462c-.029.025-.057.05-.087.074-.535.43-1.208.629-2.037.644l-.213.002a5.075 5.075 0 0 1-2.581-.675l.73-1.448c.79.467 1.286.572 1.956.558.347-.007.598-.07.761-.239a.557.557 0 0 0 .156-.369c.007-.376-.53-.553-1.185-.756-.531-.164-1.135-.389-1.606-.735-.559-.41-.825-.924-.812-1.65a1.99 1.99 0 0 1 .566-1.377c.519-.537 1.357-.863 2.363-.863zm10.597 1.67v1.904h.521c.694 0 1.247-.23 1.248-.964 0-.709-.554-.94-1.248-.94zm-5.087.767l-.748 2.362c.223.085.481.133.757.133.268 0 .52-.047.742-.126l-.736-2.37z"/></svg>SAP Analytics Cloud</span>
+          <span class="tag tag-brand"><svg class="brand" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 12a1 1 0 0 1 1 1v11H4a1 1 0 0 1-1-1V13a1 1 0 0 1 1-1h6Zm-2-.5V7a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v17h-4.5V13a1.5 1.5 0 0 0-1.5-1.5H8Zm5-6V1a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v22a1 1 0 0 1-1 1h-3.5V7A1.5 1.5 0 0 0 15 5.5h-2Z"/></svg>Power BI</span>
+          <span class="tag tag-brand"><svg class="brand" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.805 11.322v4.889a2.536 2.536 0 0 1-1.643 2.374l-1.732.652a.507.507 0 0 1-.686-.475v-5.956l-3.392 1.239a1.015 1.015 0 0 0-.664.953v7.986c0 .705.7 1.195 1.363.953l10.161-3.713a2.535 2.535 0 0 0 1.666-2.382V7.696a2.537 2.537 0 0 1-1.666 2.381l-3.407 1.245Zm0-.532V9.323a2.537 2.537 0 0 0-1.645-2.375l-1.728-.65a.508.508 0 0 0-.686.475v4.59c0 .701-.695 1.191-1.355.956L3.795 9.963a1.015 1.015 0 0 1-.674-.956V1.015c0-.701.695-1.191 1.356-.955l14.718 5.256A2.538 2.538 0 0 1 20.83 7.21c-.136.861-1.05 2.128-1.79 2.398l-3.235 1.182Z"/></svg>Dynamics 365 CRM</span>
+          <span class="tag tag-brand"><svg class="brand" viewBox="0 0 24 24" aria-hidden="true"><path d="M0 0v11.408h11.408V0zm12.594 0v11.408H24V0zM0 12.594V24h11.408V12.594zm12.594 0V24H24V12.594z"/></svg>Power Automate / Apps</span>
+          <span class="tag tag-brand"><svg class="brand" viewBox="0 0 24 24" aria-hidden="true"><path d="M16.405 5.501c-.115 0-.193.014-.274.033v.013h.014c.054.104.146.18.214.273.054.107.1.214.154.32l.014-.015c.094-.066.14-.172.14-.333-.04-.047-.046-.094-.08-.14-.04-.067-.126-.1-.18-.153zM5.77 18.695h-.927a50.854 50.854 0 00-.27-4.41h-.008l-1.41 4.41H2.45l-1.4-4.41h-.01a72.892 72.892 0 00-.195 4.41H0c.055-1.966.192-3.81.41-5.53h1.15l1.335 4.064h.008l1.347-4.064h1.095c.242 2.015.384 3.86.428 5.53zm4.017-4.08c-.378 2.045-.876 3.533-1.492 4.46-.482.716-1.01 1.073-1.583 1.073-.153 0-.34-.046-.566-.138v-.494c.11.017.24.026.386.026.268 0 .483-.075.647-.222.197-.18.295-.382.295-.605 0-.155-.077-.47-.23-.944L6.23 14.615h.91l.727 2.36c.164.536.233.91.205 1.123.4-1.064.678-2.227.835-3.483zm12.325 4.08h-2.63v-5.53h.885v4.85h1.745zm-3.32.135l-1.016-.5c.09-.076.177-.158.255-.25.433-.506.648-1.258.648-2.253 0-1.83-.718-2.746-2.155-2.746-.704 0-1.254.232-1.65.697-.43.508-.646 1.256-.646 2.245 0 .972.19 1.686.574 2.14.35.41.877.615 1.583.615.264 0 .506-.033.725-.098l1.325.772.36-.622zM15.5 17.588c-.225-.36-.337-.94-.337-1.736 0-1.393.424-2.09 1.27-2.09.443 0 .77.167.977.5.224.362.336.936.336 1.723 0 1.404-.424 2.108-1.27 2.108-.445 0-.77-.167-.978-.5zm-1.658-.425c0 .47-.172.856-.516 1.156-.344.3-.803.45-1.384.45-.543 0-1.064-.172-1.573-.515l.237-.476c.438.22.833.328 1.19.328.332 0 .593-.073.783-.22a.754.754 0 00.3-.615c0-.33-.23-.61-.648-.845-.388-.213-1.163-.657-1.163-.657-.422-.307-.632-.636-.632-1.177 0-.45.157-.81.47-1.085.315-.278.72-.415 1.22-.415.512 0 .98.136 1.4.41l-.213.476a2.726 2.726 0 00-1.064-.23c-.283 0-.502.068-.654.206a.685.685 0 00-.248.524c0 .328.234.61.666.85.393.215 1.187.67 1.187.67.433.305.648.63.648 1.168zm9.382-5.852c-.535-.014-.95.04-1.297.188-.1.04-.26.04-.274.167.055.053.063.14.11.214.08.134.218.313.346.407.14.11.28.216.427.31.26.16.555.255.81.416.145.094.293.213.44.313.073.05.12.14.214.172v-.02c-.046-.06-.06-.147-.105-.214-.067-.067-.134-.127-.2-.193a3.223 3.223 0 00-.695-.675c-.214-.146-.682-.35-.77-.595l-.013-.014c.146-.013.32-.066.46-.106.227-.06.435-.047.67-.106.106-.027.213-.06.32-.094v-.06c-.12-.12-.21-.283-.334-.395a8.867 8.867 0 00-1.104-.823c-.21-.134-.476-.22-.697-.334-.08-.04-.214-.06-.26-.127-.12-.146-.19-.34-.275-.514a17.69 17.69 0 01-.547-1.163c-.12-.262-.193-.523-.34-.763-.69-1.137-1.437-1.826-2.586-2.5-.247-.14-.543-.2-.856-.274-.167-.008-.334-.02-.5-.027-.11-.047-.216-.174-.31-.235-.38-.24-1.364-.76-1.644-.072-.18.434.267.862.422 1.082.115.153.26.328.34.5.047.116.06.235.107.356.106.294.207.622.347.897.073.14.153.287.247.413.054.073.146.107.167.227-.094.136-.1.334-.154.5-.24.757-.146 1.693.194 2.25.107.166.362.534.703.393.3-.12.234-.5.32-.835.02-.08.007-.133.048-.187v.015c.094.188.188.367.274.555.206.328.566.668.867.895.16.12.287.328.487.402v-.02h-.015c-.043-.058-.1-.086-.154-.133a3.445 3.445 0 01-.35-.4 8.76 8.76 0 01-.747-1.218c-.11-.21-.202-.436-.29-.643-.04-.08-.04-.2-.107-.24-.1.146-.247.273-.32.453-.127.288-.14.642-.188 1.01-.027.007-.014 0-.027.014-.214-.052-.287-.274-.367-.46-.2-.475-.233-1.238-.06-1.785.047-.14.247-.582.167-.716-.042-.127-.174-.2-.247-.303a2.478 2.478 0 01-.24-.427c-.16-.374-.24-.788-.414-1.162-.08-.173-.22-.354-.334-.513-.127-.18-.267-.307-.368-.52-.033-.073-.08-.194-.027-.274.014-.054.042-.075.094-.09.088-.072.335.022.422.062.247.1.455.194.662.334.094.066.195.193.315.226h.14c.214.047.455.014.655.073.355.114.675.28.962.46a5.953 5.953 0 012.085 2.286c.08.154.115.295.188.455.14.33.313.663.455.982.14.315.275.636.476.897.1.14.502.213.682.286.133.06.34.115.46.188.23.14.454.3.67.454.11.076.443.243.463.378z"/></svg>MySQL</span>
+          <span class="tag tag-brand"><svg class="brand" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.23 12.004a2.236 2.236 0 0 1-2.235 2.236 2.236 2.236 0 0 1-2.236-2.236 2.236 2.236 0 0 1 2.235-2.236 2.236 2.236 0 0 1 2.236 2.236zm2.648-10.69c-1.346 0-3.107.96-4.888 2.622-1.78-1.653-3.542-2.602-4.887-2.602-.41 0-.783.093-1.106.278-1.375.793-1.683 3.264-.973 6.365C1.98 8.917 0 10.42 0 12.004c0 1.59 1.99 3.097 5.043 4.03-.704 3.113-.39 5.588.988 6.38.32.187.69.275 1.102.275 1.345 0 3.107-.96 4.888-2.624 1.78 1.654 3.542 2.603 4.887 2.603.41 0 .783-.09 1.106-.275 1.374-.792 1.683-3.263.973-6.365C22.02 15.096 24 13.59 24 12.004c0-1.59-1.99-3.097-5.043-4.032.704-3.11.39-5.587-.988-6.38-.318-.184-.688-.277-1.092-.278zm-.005 1.09v.006c.225 0 .406.044.558.127.666.382.955 1.835.73 3.704-.054.46-.142.945-.25 1.44-.96-.236-2.006-.417-3.107-.534-.66-.905-1.345-1.727-2.035-2.447 1.592-1.48 3.087-2.292 4.105-2.295zm-9.77.02c1.012 0 2.514.808 4.11 2.28-.686.72-1.37 1.537-2.02 2.442-1.107.117-2.154.298-3.113.538-.112-.49-.195-.964-.254-1.42-.23-1.868.054-3.32.714-3.707.19-.09.4-.127.563-.132zm4.882 3.05c.455.468.91.992 1.36 1.564-.44-.02-.89-.034-1.345-.034-.46 0-.915.01-1.36.034.44-.572.895-1.096 1.345-1.565zM12 8.1c.74 0 1.477.034 2.202.093.406.582.802 1.203 1.183 1.86.372.64.71 1.29 1.018 1.946-.308.655-.646 1.31-1.013 1.95-.38.66-.773 1.288-1.18 1.87-.728.063-1.466.098-2.21.098-.74 0-1.477-.035-2.202-.093-.406-.582-.802-1.204-1.183-1.86-.372-.64-.71-1.29-1.018-1.946.303-.657.646-1.313 1.013-1.954.38-.66.773-1.286 1.18-1.868.728-.064 1.466-.098 2.21-.098zm-3.635.254c-.24.377-.48.763-.704 1.16-.225.39-.435.782-.635 1.174-.265-.656-.49-1.31-.676-1.947.64-.15 1.315-.283 2.015-.386zm7.26 0c.695.103 1.365.23 2.006.387-.18.632-.405 1.282-.66 1.933-.2-.39-.41-.783-.64-1.174-.225-.392-.465-.774-.705-1.146zm3.063.675c.484.15.944.317 1.375.498 1.732.74 2.852 1.708 2.852 2.476-.005.768-1.125 1.74-2.857 2.475-.42.18-.88.342-1.355.493-.28-.958-.646-1.956-1.1-2.98.45-1.017.81-2.01 1.085-2.964zm-13.395.004c.278.96.645 1.957 1.1 2.98-.45 1.017-.812 2.01-1.086 2.964-.484-.15-.944-.318-1.37-.5-1.732-.737-2.852-1.706-2.852-2.474 0-.768 1.12-1.742 2.852-2.476.42-.18.88-.342 1.356-.494zm11.678 4.28c.265.657.49 1.312.676 1.948-.64.157-1.316.29-2.016.39.24-.375.48-.762.705-1.158.225-.39.435-.788.636-1.18zm-9.945.02c.2.392.41.783.64 1.175.23.39.465.772.705 1.143-.695-.102-1.365-.23-2.006-.386.18-.63.406-1.282.66-1.933zM17.92 16.32c.112.493.2.968.254 1.423.23 1.868-.054 3.32-.714 3.708-.147.09-.338.128-.563.128-1.012 0-2.514-.807-4.11-2.28.686-.72 1.37-1.536 2.02-2.44 1.107-.118 2.154-.3 3.113-.54zm-11.83.01c.96.234 2.006.415 3.107.532.66.905 1.345 1.727 2.035 2.446-1.595 1.483-3.092 2.295-4.11 2.295-.22-.005-.406-.05-.553-.132-.666-.38-.955-1.834-.73-3.703.054-.46.142-.944.25-1.438zm4.56.64c.44.02.89.034 1.345.034.46 0 .915-.01 1.36-.034-.44.572-.895 1.095-1.345 1.565-.455-.47-.91-.993-1.36-1.565z"/></svg>React / Vite</span>
+        </div>
+        <div class="tag-note">ServiceNow · SharePoint · Adobe Creative Cloud</div>
+      </div>
+
+      <div class="block">
+        <h3>Industries</h3>
+        <div class="side-list">
+          <div>Insurance · Banking &amp; capital markets</div>
+          <div>Asset management · Real estate</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <h3>Languages</h3>
+        <div class="lang"><span>German</span><span>Native</span></div>
+        <div class="lang"><span>English</span><span>Fluent (business)</span></div>
+        <div class="lang"><span>Spanish</span><span>Basic</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>Eike Brenneisen — CV</span>
+    <span>Manager | Finance Transformation (41731) · Deloitte Australia</span>
+    <span>2 / 3</span>
+  </div>
+</div>
+
+<!-- ══════════════════ PAGE 3 — CV 2 ══════════════════ -->
+<div class="page">
+
+  <div class="cols">
+    <div class="col-main">
+
+      <section>
+        <h2>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3a3 3 0 0 0-3 3v1a4 4 0 0 0-2 7 4 4 0 0 0 2 7v1a3 3 0 0 0 6 0v-1a4 4 0 0 0 2-7 4 4 0 0 0-2-7V6a3 3 0 0 0-3-3z"/><path d="M12 8v8M9 12h6"/></svg>
+          Artificial Intelligence &amp; Digital Innovation
+        </h2>
+        <ul>
+          <li><strong>Established a new AI use-case approach</strong> as a delivery standard: functional prototypes built with AI on the client's own data, in days — sold at a fixed price and scaled into implementation.</li>
+          <li>Designed and built the <strong>AI sales workstation</strong> for banks and insurers and a portfolio of <strong>15+ productised solutions</strong> — AI-assisted control and credit analysis, AI collections &amp; recovery, a compensation simulation engine.</li>
+          <li><strong>Presenting a webinar series from 24 September 2026</strong> on the AI use-case model I built — taking the approach across the firm.</li>
+          <li>Built two internal platforms for Deloitte Germany <strong>on my own initiative</strong>: <strong>DEX</strong>, the firm's event experience platform, now rolling out firm-wide, and a freelancer risk-scoring solution.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          Career History
+        </h2>
+
+        <div class="job">
+          <div class="job-head">
+            <div class="job-title">Manager — Banking &amp; Capital Markets Transformation</div>
+            <div class="job-date">2022 – present</div>
+          </div>
+          <div class="job-org">Deloitte Consulting · Core Business Operations · Cologne · with Deloitte since 2021</div>
+          <ul>
+            <li><strong>Promoted to Manager in 2026</strong> after carrying acting-manager responsibility — resourcing, quality, commercials and coaching — on two consecutive engagements.</li>
+            <li>Lead <strong>large-scale transformation programs</strong> for insurers, banks and asset managers, from operating model design to go-live; coach and counsel consultants and analysts.</li>
+            <li>Earlier (2022): ran a <strong>full gap analysis across all business areas</strong> of a universal bank single-handedly, through to remediation plan and board reporting.</li>
+          </ul>
+        </div>
+
+        <div class="job">
+          <div class="job-head">
+            <div class="job-title">Early Career — Consulting and Industry Roles Alongside Studies</div>
+            <div class="job-date">2018 – 2021</div>
+          </div>
+          <div class="job-org">Monitor Deloitte · HSBC · Ströer Dialog Group · Immofinanz Deutschland</div>
+          <ul>
+            <li><strong>Monitor Deloitte</strong>, <strong>HSBC Business Transformation</strong>, <strong>Ströer Dialog Group</strong> and <strong>Immofinanz</strong>: strategy and transformation analysis, sales steering, and transaction accounting through year-end close.</li>
+          </ul>
+        </div>
+
+        <div class="job">
+          <div class="job-head">
+            <div class="job-title">Year in Australia — Work and Holiday</div>
+            <div class="job-date">2016 – 2017</div>
+          </div>
+          <div class="job-org">Australia · living and working across the country — the reason I have wanted to return in a professional context ever since</div>
+        </div>
+
+        <div class="job">
+          <div class="job-head">
+            <div class="job-title">Financial Advisor — Private and Corporate Clients</div>
+            <div class="job-date">2013 – 2016</div>
+          </div>
+          <div class="job-org">Oldenburgische Landesbank AG · bank apprenticeship and full-time advisory role</div>
+          <ul>
+            <li>Advised clients end to end on <strong>securities, financial planning and lending</strong> — the reason I read a client's P&amp;L the way their own people do.</li>
+          </ul>
+        </div>
+
+      </section>
+
+      <section>
+        <h2>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2.5 9 2.5 12 0v-5"/></svg>
+          Education
+        </h2>
+
+        <div class="edu">
+          <div class="edu-deg">M.Sc. International Management — CEMS MIM (double degree)</div>
+          <div class="edu-org">University of Cologne · CEMS Global Alliance · 2020 – 2022</div>
+          <div class="edu-meta"><strong>Top 15% of the cohort</strong> · Majors: Corporate Development and Business Model Design</div>
+        </div>
+
+        <div class="edu">
+          <div class="edu-deg">B.Sc. Business Administration</div>
+          <div class="edu-org">University of Cologne · 2017 – 2020</div>
+          <div class="edu-meta"><strong>Top 15% of the cohort</strong> (German grade 1.6 ≈ Distinction average) · Majors: International Strategic Management, Financial Management</div>
+        </div>
+
+        <div class="edu">
+          <div class="edu-deg">Certified Bank Clerk (Bankkaufmann, IHK) — highest grade band, “very good”</div>
+          <div class="edu-org">Oldenburgische Landesbank AG · 2013 – 2016</div>
+        </div>
+      </section>
+
+    </div>
+
+    <div class="col-side">
+
+      <div class="block">
+        <h3>Business-Led Software E2E</h3>
+        <div class="side-list">
+          <div>Requirements &amp; business case ownership</div>
+          <div>Data modelling and calculation logic</div>
+          <div>Build, interface design and rollout</div>
+          <div>Vendor and IT delivery steering</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <h3>Delivery &amp; Leadership</h3>
+        <div class="side-list">
+          <div>Program &amp; project management</div>
+          <div>Go-live &amp; migration management</div>
+          <div>C-level stakeholder management</div>
+          <div>Team leadership &amp; coaching</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <h3>Selected AI Builds</h3>
+        <div class="side-list">
+          <div>Financial services AI use-case platform</div>
+          <div>AI sales workstation</div>
+          <div>AI credit analysis · collections &amp; recovery</div>
+          <div>Internal control system analysis</div>
+          <div>Compensation simulation engine</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <h3>Selected Clients</h3>
+        <div class="side-list">
+          <div>ERGO Group · Barmenia Gothaer</div>
+          <div>Allianz Deutschland · Commerz Real</div>
+          <div>HSBC Trinkaus &amp; Burkhardt · Oldenburgische Landesbank</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <h3>Beyond the CV</h3>
+        <div class="side-list">
+          <div>51 countries travelled; trekked to 5,000 m in the Himalayas</div>
+          <div>Coordinate Deloitte Cologne's corporate running events</div>
+          <div>Planted a forest of 100,000 trees as a personal carbon offset</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>Eike Brenneisen — CV</span>
+    <span>Manager | Finance Transformation (41731) · Deloitte Australia</span>
+    <span>3 / 3</span>
+  </div>
+</div>
+
+</body>
+</html>
