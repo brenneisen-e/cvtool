@@ -70,7 +70,7 @@
     border-bottom: 1.5px solid var(--green); padding-bottom: 1.1mm; margin-bottom: 2.6mm;
   }
   h2 svg { width: 3.8mm; height: 3.8mm; stroke: var(--green-dark); flex: none; }
-  h2 { margin-bottom: 3.4mm; }
+  h2 { margin-bottom: 3.4mm; line-height: 4mm; }
   section { margin-bottom: 7mm; }
   section:last-child { margin-bottom: 0; }
 
@@ -82,6 +82,7 @@
     border-top: 2px solid var(--green);
     padding: 4.5mm 4mm 2mm;
     align-self: stretch;
+    margin-top: 5.1mm; /* = h2 line-height 4mm + padding-bottom 1.1mm: Linie auf Höhe der h2-Unterlinie */
   }
 
   .summary { font-size: 8.9pt; line-height: 1.65; text-align: justify; }
